@@ -48,46 +48,33 @@ public class ClassName {
 
 标准类库（如 `System`、`Math`）中的类是预先定义好的；实际开发中需要根据需求自行设计类。
 
-以下这一组程序把类的定义与程序入口拆分到两个文件中，并通过对象创建、方法调用与字符串输出来展示类的基本使用方式。
+以下示例中， `Die` 类定义了骰子的数据与方法；`RollingDice` 类包含 `main` 方法，负责创建并使用 `Die` 对象。
 
-> [!example]- 示例：`Die.java` / `RollingDice.java`
->
-> 这一组程序展示了如何先定义 `Die` 类的状态与行为，再由 `RollingDice` 创建对象并驱动整个程序流程。
->
-> > [!info]- UML 框图
-> >
-> > ```
-> > RollingDice.java
-> >      |
-> >      v
-> >    Die.java
-> > ```
->
-> `Die.java` 定义骰子的实例数据、构造器以及对外可调用的方法。
+> [!example]- 示例：`Die.java`
 >
 > ```java
 > // Die.java
 > public class Die {
->     private final int MAX = 6;   // 骰子的最大面值常量
->     private int faceValue;       // 当前面值，属于实例数据
+>     private final int MAX = 6;   // 最大面值，常量
+>     private int faceValue;       // 当前面值，实例数据
 >
->     // 构造器：把初始面值设为 1
+>     // 构造器：初始化面值为 1
 >     public Die() {
 >         faceValue = 1;
 >     }
 >
->     // 掷骰子并返回新的面值
+>     // 掷骰子：生成 1~6 随机整数并返回
 >     public int roll() {
 >         faceValue = (int)(Math.random() * MAX) + 1;
 >         return faceValue;
 >     }
 >
->     // 修改当前面值
+>     // 修改器：设置面值
 >     public void setFaceValue(int value) {
 >         faceValue = value;
 >     }
 >
->     // 读取当前面值
+>     // 访问器：返回当前面值
 >     public int getFaceValue() {
 >         return faceValue;
 >     }
@@ -100,8 +87,51 @@ public class ClassName {
 > }
 > ```
 >
-> `RollingDice.java` 负责创建两个 `Die` 对象，并按顺序调用它们的方法观察对象状态的变化。
 >
+> **数据声明**
+> ```java
+> private final int MAX = 6;
+> private int faceValue;
+> ```
+> - `MAX` 以 `final` 修饰，为不可更改的常量，表示骰子最大面值。
+> - `faceValue` 是实例数据，每个 `Die` 对象拥有独立的副本。
+> - `private` 修饰符限制外部直接访问，需通过方法间接操作。
+>
+> **构造器**
+> ```java
+> public Die() {
+>     faceValue = 1;
+> }
+> ```
+> - 构造器名称与类名相同，无返回类型。
+> - 对象创建时自动调用，将 `faceValue` 初始化为 1。
+>
+> **`roll()` 方法**
+> ```java
+> faceValue = (int)(Math.random() * MAX) + 1;
+> return faceValue;
+> ```
+> - `Math.random()` 返回 $[0.0, 1.0)$ 的随机浮点数，乘以 `MAX` 后范围变为 $[0.0, 6.0)$。
+> - 强制转换为 `int` 后范围为 $[0, 5]$，加 1 后变为 $[1, 6]$。
+>
+> **访问器与修改器**
+> ```java
+> public void setFaceValue(int value) { faceValue = value; }
+> public int getFaceValue() { return faceValue; }
+> ```
+> - `setFaceValue` 允许外部设置面值，`getFaceValue` 允许外部读取面值。
+> - 两者配合 `private` 字段，实现封装 (*Encapsulation*)。
+>
+> **`toString()` 方法**
+> ```java
+> String result = Integer.toString(faceValue);
+> return result;
+> ```
+> - `Integer.toString()` 将整数转换为字符串。
+> - 当对象被拼接到字符串或传入 `println` 时，Java 自动调用此方法。
+>
+
+> [!example]- 示例：`RollingDice.java`
 > ```java
 > // RollingDice.java
 > public class RollingDice {
@@ -109,117 +139,79 @@ public class ClassName {
 >         Die die1, die2;
 >         int sum;
 >
->         die1 = new Die();    // 创建第一个骰子对象
->         die2 = new Die();    // 创建第二个骰子对象
+>         die1 = new Die();
+>         die2 = new Die();
 >
->         die1.roll();         // 两个对象分别掷一次
+>         die1.roll();
 >         die2.roll();
 >         System.out.println("Die One: " + die1 + ", Die Two: " + die2);
 >
->         die1.roll();         // 再次更新 die1 的面值
->         die2.setFaceValue(4); // 直接把 die2 设为 4
+>         die1.roll();
+>         die2.setFaceValue(4);
 >         System.out.println("Die One: " + die1 + ", Die Two: " + die2);
 >
 >         sum = die1.getFaceValue() + die2.getFaceValue();
 >         System.out.println("Sum: " + sum);
 >
->         sum = die1.roll() + die2.roll(); // 直接使用返回值求和
+>         sum = die1.roll() + die2.roll();
 >         System.out.println("Die One: " + die1 + ", Die Two: " + die2);
 >         System.out.println("New sum: " + sum);
 >     }
 > }
 > ```
->
-> 输出：
->
-> 由于运行结果具有随机性，以下给出一种可能的输出。
->
-> ```
-> Die One: 5, Die Two: 2
-> Die One: 1, Die Two: 4
-> Sum: 5
-> Die One: 4, Die Two: 2
-> New sum: 6
-> ```
->
-> **`Die.java` 中的类定义**
->
+> **变量声明与实例化**
 > ```java
-> private final int MAX = 6;
-> private int faceValue;
-> ```
->
-> - `MAX` 以 `final` 修饰，为不可更改的常量，表示骰子的最大面值。
-> - `faceValue` 是实例数据，每个 `Die` 对象都拥有独立副本。
-> - `private` 限制外部直接访问，因此外部代码只能通过方法间接读写面值。
->
-> **`Die.java` 中的初始化与行为**
->
-> ```java
-> public Die() {
->     faceValue = 1;
-> }
->
-> public int roll() {
->     faceValue = (int)(Math.random() * MAX) + 1;
->     return faceValue;
-> }
-> ```
->
-> - 构造器名称与类名相同，没有返回类型；对象创建时自动调用，并把 `faceValue` 初始化为 1。
-> - `Math.random()` 返回 $[0.0, 1.0)$ 的随机浮点数，乘以 `MAX` 后得到 $[0.0, 6.0)$，转换为 `int` 后落在 $[0, 5]$，再加 1 得到 $[1, 6]$。
->
-> **`Die.java` 中的对外接口**
->
-> ```java
-> public void setFaceValue(int value) {
->     faceValue = value;
-> }
->
-> public int getFaceValue() {
->     return faceValue;
-> }
->
-> public String toString() {
->     String result = Integer.toString(faceValue);
->     return result;
-> }
-> ```
->
-> - `setFaceValue()` 是修改器，负责更新对象状态；`getFaceValue()` 是访问器，负责读取对象状态。
-> - `toString()` 把整数面值转换为字符串，因此对象参与字符串拼接时会输出可读的点数，而不是默认的对象标识。
->
-> **`RollingDice.java` 中的对象使用**
->
-> ```java
+> Die die1, die2;
+> int sum;
 > die1 = new Die();
 > die2 = new Die();
 > ```
+> - 声明两个 `Die` 类型的引用变量，此时尚未分配对象内存。
+> - `new Die()` 调用构造器，分配内存并初始化 `faceValue = 1`。
 >
-> - 两个引用变量分别指向两个独立对象，因此后续状态变化彼此独立。
-> - `new Die()` 不仅分配对象内存，也会立即调用构造器完成初始化。
->
-> **`RollingDice.java` 中的状态变化与输出**
->
+> **第一次掷骰并输出**
 > ```java
 > die1.roll();
 > die2.roll();
 > System.out.println("Die One: " + die1 + ", Die Two: " + die2);
+> ```
+> - 两个对象各自掷骰，`faceValue` 被随机赋值。
+> - 字符串拼接中 `die1` 与 `die2` 自动调用各自的 `toString()`，输出当前面值。
+> - 样例输出：`Die One: 5, Die Two: 2`
 >
+> **第二次操作**
+> ```java
 > die1.roll();
 > die2.setFaceValue(4);
+> System.out.println("Die One: " + die1 + ", Die Two: " + die2);
 > sum = die1.getFaceValue() + die2.getFaceValue();
+> System.out.println("Sum: " + sum);
 > ```
+> - `die1` 再次掷骰，`die2` 面值直接设为 4。
+> - `getFaceValue()` 读取当前面值并求和。
+> - 样例输出：`Die One: 1, Die Two: 4` / `Sum: 5`
 >
-> - 第一次输出展示两个对象各自掷骰后的状态，字符串拼接中的 `die1` 与 `die2` 会自动调用各自的 `toString()`。
-> - 第二次操作分别通过 `roll()` 与 `setFaceValue()` 更新状态，再通过 `getFaceValue()` 读取状态求和，说明对象既可以通过行为自主变化，也可以通过接口被外部显式修改。
+> **第三次掷骰**
+> ```java
+> sum = die1.roll() + die2.roll();
+> System.out.println("Die One: " + die1 + ", Die Two: " + die2);
+> System.out.println("New sum: " + sum);
+> ```
+> - `roll()` 返回新面值，两次返回值直接相加赋给 `sum`。
+> - 输出时 `die1` 与 `die2` 的 `faceValue` 已更新为本次掷骰结果。
+> - 样例输出：`Die One: 4, Die Two: 2` / `New sum: 6`
 
 ## 3.2 数据作用域与实例数据
 
-作用域 (*Scope*) 指程序中某个数据可被引用的范围。按声明位置划分，Java 中的数据主要分为实例数据 (*Instance Data*) 与局部变量 (*Local Variable*) 两类。
+作用域 (*Scope*) 指程序中某个数据可被引用的范围。Java 中按声明位置区分两类数据：
 
-- 实例数据在类级别 (*Class Level*) 声明，位于所有方法之外；该类的所有方法均可访问，且每个对象实例都拥有独立副本。
-- 局部变量在方法内部声明，只在当前方法内部有效，方法执行结束后销毁；例如 `Die` 类中 `toString()` 方法内的 `result` 变量，只能在 `toString()` 内部使用。
+- 实例数据 (*Instance Data*)：
+  - 在类级别 (*Class Level*) 声明，位于所有方法外；该类的所有方法均可访问。
+  - 每个对象实例拥有**独立的副本**，互不干扰。
+
+- 局部变量 (*Local Variable*)：
+  - 在方法内声明，仅在该方法内有效，方法执行结束后销毁。
+  - 例如 `Die` 类中 `toString()` 方法内的 `result` 变量，只能在 `toString()` 内部使用。
 
 ```java
 public class Die {
@@ -232,7 +224,11 @@ public class Die {
 }
 ```
 
-类的定义本身不分配内存，只描述数据的类型与结构。每次通过 `new` 创建对象时，JVM 为该对象的所有实例数据单独分配内存。所有对象共享同一份方法定义，但各自维护独立的数据空间，这正是两个对象能够拥有不同状态的根本原因。
+实例数据的独立性：
+
+- 类的定义本身不分配内存，只描述数据的类型与结构。
+- 每次通过 `new` 创建对象时，JVM 为该对象的所有实例数据单独分配内存。
+- 所有对象**共享方法定义**，但各自维护独立的数据空间，这是两个对象能拥有不同状态的根本原因。
 
 以 `RollingDice` 中的两个 `Die` 对象为例：
 
@@ -336,66 +332,57 @@ public class Die {
 > [!note]
 > 一旦程序员定义了任意一个构造器，编译器将**不再**自动提供默认无参构造器。若仍需使用无参构造，必须显式定义。
 
-> [!question] 习题：Test Your Understanding 2 — 编写随机初始化的构造器
+> [!example]- 例题：Test Your Understanding 2 — 编写随机初始化的构造器
+>
 > 为 `Die` 类编写一个构造器，将 `faceValue` 初始化为 1~6 之间的随机整数。
 >
-> > [!check]-
-> > `Die` 类的无参构造器可以直接完成随机初始化，核心在于把 `Math.random()` 产生的浮点数映射到 $[1, 6]$ 的整数区间。
-> >
-> > ```java
-> > public class Die {
-> >     private int faceValue;
-> > 
-> >     public Die() {
-> >         faceValue = (int)(Math.random() * 6) + 1; // 生成 1 到 6 的随机整数
-> >     }
-> > }
-> > ```
-> >
-> > **构造器主体**
-> >
-> > ```java
-> > faceValue = (int)(Math.random() * 6) + 1;
-> > ```
-> >
-> > - `Math.random()` 返回 $[0.0, 1.0)$ 的随机浮点数，乘以 6 后范围变为 $[0.0, 6.0)$。
-> > - 强制转换为 `int` 后小数部分被截去，因此结果落在 $[0, 5]$；再加 1 后得到 $[1, 6]$。
+> ```java
+> public class Die {
+>     private int faceValue;
+>
+>     public Die() {
+>         faceValue = (int)(Math.random() * 6) + 1;
+>     }
+> }
+> ```
+>
+> **构造器主体**
+> ```java
+> faceValue = (int)(Math.random() * 6) + 1;
+> ```
+> - `Math.random()` 返回 $[0.0, 1.0)$ 的随机浮点数，乘以 6 后范围为 $[0.0, 6.0)$。
+> - 强制转换为 `int` 截断小数部分，范围变为 $[0, 5]$，加 1 后得到 $[1, 6]$。
+> - 结果赋给 `faceValue`，完成随机初始化。
 
-> [!question] 习题：Test Your Understanding 3 — 带参构造器初始化 Movie 类
+> [!example]- 例题：Test Your Understanding 3 — 带参构造器初始化 `Movie` 类
+>
 > 为 `Movie` 类编写构造器，通过参数初始化 `title` 和 `director` 两个实例变量。
 >
-> > [!check]-
-> > 带参构造器的作用是把对象创建时传入的外部数据写入实例变量，从而让对象在创建瞬间就处于有效初始状态。
-> >
-> > ```java
-> > public class Movie {
-> >     private String title;
-> >     private String director;
-> > 
-> >     public Movie(String theTitle, String theDirector) {
-> >         title = theTitle;         // 初始化电影标题
-> >         director = theDirector;   // 初始化导演姓名
-> >     }
-> > }
-> > ```
-> >
-> > **参数声明**
-> >
-> > ```java
-> > public Movie(String theTitle, String theDirector)
-> > ```
-> >
-> > - 构造器接收两个 `String` 类型参数，分别对应电影标题与导演姓名。
-> > - 参数名写成 `theTitle` 与 `theDirector`，可以避免与实例变量同名时产生歧义。
-> >
-> > **赋值语句**
-> >
-> > ```java
-> > title = theTitle;
-> > director = theDirector;
-> > ```
-> >
-> > - 这两条语句把传入参数分别写入实例变量，完成对象初始化。
+> ```java
+> public class Movie {
+>     private String title;
+>     private String director;
+>
+>     public Movie(String theTitle, String theDirector) {
+>         title = theTitle;
+>         director = theDirector;
+>     }
+> }
+> ```
+>
+> **参数声明**
+> ```java
+> public Movie(String theTitle, String theDirector)
+> ```
+> - 构造器接收两个 `String` 类型参数，参数名与实例变量名不同，避免命名冲突。
+> - 参数名使用 `theTitle` / `theDirector` 以与实例变量 `title` / `director` 区分。
+>
+> **赋值语句**
+> ```java
+> title = theTitle;
+> director = theDirector;
+> ```
+> - 将传入参数的值分别赋给对应的实例变量，完成初始化。
 
 > [!note]
 > 若参数名与实例变量名相同（如均为 `title`），则需使用 `this.title = title` 加以区分。`this` 关键字指代当前对象，后续章节将详细介绍。
@@ -420,110 +407,100 @@ public class Die {
 
 > [!example]- 示例：未覆写 `toString()` 的输出结果
 >
-> 这个版本保留 `Object` 默认提供的 `toString()` 实现，因此打印对象时只能看到 `类名@哈希码` 形式的结果。
+> 以下程序未为 `Student` 类定义 `toString()`，直接打印对象。
 >
 > ```java
 > class Student {
 >     int rollno;
 >     String name;
 >     String city;
-> 
+>
 >     Student(int rollno, String name, String city) {
 >         this.rollno = rollno;
 >         this.name = name;
 >         this.city = city;
 >     }
-> 
+>
 >     public static void main(String args[]) {
->         Student s1 = new Student(101, "Raj", "lucknow");      // 创建第一个学生对象
->         Student s2 = new Student(102, "Vijay", "ghaziabad");  // 创建第二个学生对象
-> 
->         System.out.println(s1);  // 自动调用默认的 toString()
->         System.out.println(s2);
+>         Student s1 = new Student(101, "Raj", "lucknow");
+>         Student s2 = new Student(102, "Vijay", "ghaziabad");
+>
+>         System.out.println(s1);  // 编译器自动调用 s1.toString()
+>         System.out.println(s2);  // 编译器自动调用 s2.toString()
 >     }
 > }
 > ```
 >
-> 输出：
->
+> **输出**
 > ```
 > Student@1fee6fc
 > Student@1eed786
 > ```
 >
-> **对象创建**
->
+> **变量声明与实例化**
 > ```java
 > Student s1 = new Student(101, "Raj", "lucknow");
 > Student s2 = new Student(102, "Vijay", "ghaziabad");
 > ```
+> - 调用带参构造器，分别初始化两个 `Student` 对象的三个实例变量。
 >
-> - 带参构造器在对象创建时同时初始化 `rollno`、`name` 与 `city` 三个实例变量。
->
-> **打印对象**
->
+> **打印语句**
 > ```java
 > System.out.println(s1);
 > System.out.println(s2);
 > ```
->
-> - `println()` 遇到对象参数时会自动调用该对象的 `toString()`。
-> - 由于这里没有覆写，实际调用的是 `Object` 提供的默认实现，因此输出形式为 `类名@哈希码`。
+> - 编译器自动调用 `s1.toString()` 与 `s2.toString()`。
+> - 由于未覆写，调用的是 `Object` 类的默认实现，输出 `类名@哈希码`，而非对象的实际数据。
 
 > [!example]- 示例：覆写 `toString()` 后的输出结果
 >
-> 为 `Student` 补上 `toString()` 后，打印对象时就可以直接得到对象状态的字符串表示。
+> 为 `Student` 类添加 `toString()` 方法，返回有意义的字符串。
 >
 > ```java
 > class Student {
 >     int rollno;
 >     String name;
 >     String city;
-> 
+>
 >     Student(int rollno, String name, String city) {
 >         this.rollno = rollno;
 >         this.name = name;
 >         this.city = city;
 >     }
-> 
+>
 >     public String toString() {
->         return rollno + " " + name + " " + city; // 拼接对象的主要状态
+>         return rollno + " " + name + " " + city;
 >     }
-> 
+>
 >     public static void main(String args[]) {
 >         Student s1 = new Student(101, "Raj", "lucknow");
 >         Student s2 = new Student(102, "Vijay", "ghaziabad");
-> 
+>
 >         System.out.println(s1);
 >         System.out.println(s2);
 >     }
 > }
 > ```
 >
-> 输出：
->
+> **输出**
 > ```
 > 101 Raj lucknow
 > 102 Vijay ghaziabad
 > ```
 >
 > **`toString()` 方法体**
->
 > ```java
 > return rollno + " " + name + " " + city;
 > ```
+> - 将三个实例变量以空格分隔拼接为一个字符串并返回。
+> - `rollno` 为 `int` 类型，与字符串拼接时自动转换为 `String`。
 >
-> - 方法把三个实例变量按空格顺序拼接成字符串返回，因此输出直接反映对象状态。
-> - `rollno` 虽然是 `int`，但在字符串拼接表达式中会自动转换为 `String`。
->
-> **打印对象**
->
+> **打印语句**
 > ```java
 > System.out.println(s1);
 > System.out.println(s2);
 > ```
->
-> - 这一处仍然是 `println()` 自动调用 `toString()`；区别只在于现在调用的是程序员覆写后的版本。
+> - 编译器调用覆写后的 `toString()`，输出对象的实际数据而非哈希码。
 
 > [!note]
 > 覆写 `toString()` 时，方法签名必须与 `Object` 类中的定义完全一致。
@@ -547,7 +524,12 @@ public class ClassName {
 - 实例数据通常以 `private` 修饰，外部无法直接访问，需通过方法间接操作。
 - 并非每个类都需要 `main` 方法，`main` 方法仅出现在程序入口类中。
 
-访问器 (*Accessor*) 与修改器 (*Mutator*) 是封装中最常见的一对方法类别。访问器也称 `getter`，用于返回某个实例变量的当前值而不修改对象状态；修改器也称 `setter`，用于接收参数并更新某个实例变量的值。两者配合 `private` 字段，是实现封装 (*Encapsulation*) 的标准方式。
+访问器 (*Accessor*) 与修改器 (*Mutator*) 是封装中最常见的一对方法类别。
+
+- 访问器也称 `getter`，返回某个实例变量的当前值，不修改对象状态，命名惯例为 `getXxx()`。
+- 修改器也称 `setter`，接收参数并更新某个实例变量的值，命名惯例为 `setXxx()`。
+
+两者配合 `private` 字段，是实现封装 (*Encapsulation*) 的标准方式。
 
 ```java
 public class Child {
@@ -565,9 +547,9 @@ public class Child {
 }
 ```
 
-> [!example]- 示例：`SimpleDieGame1.java`
+> [!example]- 示例：`SimpleDieGame1.java` — 单骰子比大小
 >
-> `SimpleDieGame1.java` 演示如何复用同一个 `Die` 对象，并把两次 `roll()` 的返回值保存到局部变量中完成比较。
+> John 与 Mary 各掷一次同一个骰子，面值较大者获胜。
 >
 > ```java
 > public class SimpleDieGame1 {
@@ -612,12 +594,12 @@ public class Child {
 > - 三路分支覆盖所有情况：John 胜、Mary 胜、平局。
 > - 使用的是局部变量 `johnValue` 与 `maryValue`，而非 `die.getFaceValue()`，因为第二次 `roll()` 已覆盖 `faceValue`。
 >
-> > [!warning]
-> > 课件中 `SimpleDieGame1.java` 包含 `int value = die.faceValue;` 这一行，由于 `faceValue` 是 `private` 字段，此写法**无法通过编译**。正确做法是通过 `die.getFaceValue()` 访问。
+>> [!warning]
+>> 课件中 `SimpleDieGame1.java` 包含 `int value = die.faceValue;` 这一行，由于 `faceValue` 是 `private` 字段，此写法**无法通过编译**。正确做法是通过 `die.getFaceValue()` 访问。
 
-> [!example]- 示例：`SimpleDieGame2.java`
+> [!example]- 示例：`SimpleDieGame2.java` — 持续掷骰直到面值为 6
 >
-> `SimpleDieGame2.java` 演示带参构造器、`while` 循环与 `toString()` 如何配合，持续掷骰直到再次得到面值 6。
+> 骰子初始面值设为 6，持续掷骰直到再次出现 6 为止。
 >
 > ```java
 > public class SimpleDieGame2 {
@@ -663,47 +645,41 @@ public class Child {
 > ```
 > - 循环结束时 `newValue == 6`，输出最终面值。
 
-> [!question] 习题：Test Your Understanding 4 — 为 Child 类编写访问器与修改器
+> [!example]- 例题：Test Your Understanding 4 — 为 `Child` 类编写访问器与修改器
+>
 > 为拥有实例变量 `age` 的 `Child` 类编写访问器与修改器。
 >
-> > [!check]-
-> > 访问器负责读取状态，修改器负责更新状态；两者共同组成对 `private` 实例变量的标准封装接口。
-> >
-> > ```java
-> > public class Child {
-> >     private int age;
-> > 
-> >     public int getAge() {
-> >         return age; // 返回当前年龄
-> >     }
-> > 
-> >     public void setAge(int newAge) {
-> >         age = newAge; // 用参数更新年龄
-> >     }
-> > }
-> > ```
-> >
-> > **访问器**
-> >
-> > ```java
-> > public int getAge() {
-> >     return age;
-> > }
-> > ```
-> >
-> > - 返回类型写为 `int`，因为它返回的是 `age` 当前保存的整数值。
-> > - 方法体只有 `return`，因此它读取状态但不改变对象状态。
-> >
-> > **修改器**
-> >
-> > ```java
-> > public void setAge(int newAge) {
-> >     age = newAge;
-> > }
-> > ```
-> >
-> > - 返回类型是 `void`，因为修改器的职责是更新状态而不是返回结果。
-> > - 参数 `newAge` 作为新的输入值写入实例变量 `age`。
+> ```java
+> public class Child {
+>     private int age;
+>
+>     public int getAge() {
+>         return age;
+>     }
+>
+>     public void setAge(int newAge) {
+>         age = newAge;
+>     }
+> }
+> ```
+>
+> **访问器**
+> ```java
+> public int getAge() {
+>     return age;
+> }
+> ```
+> - 返回类型为 `int`，与 `age` 的类型一致。
+> - 方法体仅包含 `return` 语句，不修改任何状态。
+>
+> **修改器**
+> ```java
+> public void setAge(int newAge) {
+>     age = newAge;
+> }
+> ```
+> - 返回类型为 `void`，接收一个 `int` 参数。
+> - 将参数值赋给实例变量 `age`，完成状态更新。
 
 ## 3.6 UML 类图
 
@@ -737,10 +713,10 @@ public class Child {
 
 #### 类间关系 (*Inter-Class Relationships*)
 
-依赖关系 (*Dependency*) 指一个类使用另一个类的方法，在 UML 中以**虚线箭头**表示，箭头指向被使用的类。
+依赖关系 (*Dependency*)：一个类使用另一个类的方法，在 UML 中以**虚线箭头**表示，箭头指向被使用的类。
 - 例如：`RollingDice` 使用 `Die` 的方法，`RollingDice` 指向 `Die`。
 
-继承关系 (*Inheritance*) 指子类继承父类的属性与方法，在 UML 中以**实线空心箭头**表示，箭头指向父类。
+继承关系 (*Inheritance*)：子类继承父类的属性与方法，在 UML 中以**实线空心箭头**表示，箭头指向父类。
 - 例如：`Cat`、`Dog`、`Bird` 继承自 `Animal`，三者均指向 `Animal`。
 
 以 `Die` 类与 `RollingDice` 类为例：
@@ -786,46 +762,42 @@ public class Child {
    └───────┘   └───────┘  └───────┘
 ```
 
-> [!question] 习题：Test Your Understanding 5 — 绘制动物类 UML 类图
+> [!example]- 例题：Test Your Understanding 5 — 绘制动物类 UML 类图
+>
 > 设计三个动物类继承自 `Animal`，每个类给出两个状态与两个行为。
 >
-> > [!check]-
-> > 这道题的关键是先抽取所有动物共享的共性放入父类，再把各自特有的状态与行为分配到对应子类中。
-> >
-> > ```
-> > ┌─────────────────────────┐
-> > │         Animal          │
-> > ├─────────────────────────┤
-> > │  - name : String        │
-> > │  - age : int            │
-> > ├─────────────────────────┤
-> > │  + eat() : void         │
-> > │  + sleep() : void       │
-> > └─────────────────────────┘
-> >          ↑      ↑      ↑
-> >    ┌─────┘      │      └──────┐
-> > ┌──┴───────┐ ┌──┴───────┐ ┌──┴───────┐
-> > │   Cat    │ │   Dog    │ │   Bird   │
-> > ├──────────┤ ├──────────┤ ├──────────┤
-> > │-color    │ │-breed    │ │-canFly   │
-> > │-indoor   │ │-trained  │ │-wingSpan │
-> > ├──────────┤ ├──────────┤ ├──────────┤
-> > │+purr()   │ │+fetch()  │ │+sing()   │
-> > │+climb()  │ │+bark()   │ │+fly()    │
-> > └──────────┘ └──────────┘ └──────────┘
-> > ```
-> >
-> > **`Animal` 类**
-> >
-> > - `name` 与 `age` 是所有动物共有的状态，因此应定义在父类中。
-> > - `eat()` 与 `sleep()` 是所有动物都具备的基本行为，因此也放在父类中统一声明。
-> >
-> > **子类的扩展**
-> >
-> > - `Cat` 额外包含 `color`、`indoor` 以及 `purr()`、`climb()`。
-> > - `Dog` 额外包含 `breed`、`trained` 以及 `fetch()`、`bark()`。
-> > - `Bird` 额外包含 `canFly`、`wingSpan` 以及 `sing()`、`fly()`。
-> > - 三个子类通过继承箭头指向 `Animal`，表示它们共享父类定义的共性结构。
+> ```
+> ┌─────────────────────────┐
+> │         Animal          │
+> ├─────────────────────────┤
+> │  - name : String        │
+> │  - age : int            │
+> ├─────────────────────────┤
+> │  + eat() : void         │
+> │  + sleep() : void       │
+> └─────────────────────────┘
+>          ↑      ↑      ↑
+>    ┌─────┘      │      └──────┐
+> ┌──┴───────┐ ┌──┴───────┐ ┌──┴───────┐
+> │   Cat    │ │   Dog    │ │   Bird   │
+> ├──────────┤ ├──────────┤ ├──────────┤
+> │-color    │ │-breed    │ │-canFly   │
+> │-indoor   │ │-trained  │ │-wingSpan │
+> ├──────────┤ ├──────────┤ ├──────────┤
+> │+purr()   │ │+fetch()  │ │+sing()   │
+> │+climb()  │ │+bark()   │ │+fly()    │
+> └──────────┘ └──────────┘ └──────────┘
+> ```
+>
+> **`Animal` 类**
+> - 状态：`name`（名称）、`age`（年龄），为所有动物共有的属性，定义在父类中。
+> - 行为：`eat()`（进食）、`sleep()`（睡眠），为所有动物共有的基本行为。
+>
+> **子类各自的扩展**
+> - `Cat`：增加 `color`（毛色）、`indoor`（是否室内猫）；行为 `purr()`（发出呼噜声）、`climb()`（爬树）。
+> - `Dog`：增加 `breed`（品种）、`trained`（是否受过训练）；行为 `fetch()`（捡球）、`bark()`（吠叫）。
+> - `Bird`：增加 `canFly`（是否会飞）、`wingSpan`（翼展）；行为 `sing()`（鸣叫）、`fly()`（飞翔）。
+> - 三个子类通过继承箭头指向 `Animal`，表示继承关系。
 
 ---
 `Pre: ` [[ELEC2543 Ch.2 Expression & Java Syntax]]
