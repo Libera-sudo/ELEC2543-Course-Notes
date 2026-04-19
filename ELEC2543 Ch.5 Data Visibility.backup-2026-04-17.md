@@ -41,8 +41,6 @@ die1                    die2
 > [!example]- 示例：`Die.java`
 > 表示一个六面骰子，演示实例数据与局部数据的声明位置及访问规则。
 >
-> ^die-java-example
->
 > ```java
 > public class Die
 > {
@@ -122,7 +120,6 @@ die1                    die2
 > - `result` 声明于 `toString()` 方法内部，是局部数据，方法执行结束后即被销毁。
 > - 在 `Die` 类的其他方法中无法引用 `result`。
 
-
 ## 5.2 封装
 
 封装是面向对象设计的核心原则之一。封装将对象的内部数据与外部客户端 (*Client*) 隔离，客户端只能通过对象提供的公开接口 (*Interface*) 与之交互，而无需了解其内部实现细节。
@@ -131,7 +128,7 @@ die1                    die2
 - 对象状态的修改应由该对象自身的方法负责，而非由外部直接操作。
 - 封装使客户端难以（甚至无法）直接访问对象的内部变量。
 
-封装的优势：
+**封装的优势：**
 
 - 保护对象数据不被客户端随意修改。
 - 允许在不暴露底层实现的情况下提供访问接口。
@@ -139,7 +136,7 @@ die1                    die2
 - 简化程序的维护与理解成本。
 
 > [!example]- 示例：`Car.java`（无封装 vs. 有封装）
-> 这组对照代码展示 `public` 实例变量如何导致不受控访问，以及封装如何把状态修改重新收回到对象方法内部。
+> 演示 `public` 实例变量导致的不受控访问问题，以及封装如何加以约束。
 >
 > **无封装版本**
 >
@@ -248,8 +245,6 @@ Java 提供三种可见性修饰符：
 
 #### 变量的可见性规范
 
-变量与常量的可见性选择，直接决定了对象状态是否仍由类自身控制。
-
 - 实例变量不应声明为 `public`，否则客户端可直接修改其值，破坏封装。
 - 常量（`final` 修饰的变量）可声明为 `public`，因为其值无法被修改，不违反封装原则。
 
@@ -259,7 +254,8 @@ Java 提供三种可见性修饰符：
 
 #### 方法的可见性规范
 
-提供对象服务的方法声明为 `public`，称为服务方法 (*Service Methods*)，供客户端调用；仅用于辅助其他方法的内部方法声明为 `private`，称为支持方法 (*Support Methods*)，不对外暴露。
+- 提供对象服务的方法声明为 `public`，称为服务方法 (*Service Methods*)，供客户端调用。
+- 仅用于辅助其他方法的内部方法声明为 `private`，称为支持方法 (*Support Methods*)，不对外暴露。
 
 推荐的可见性规范：
 
@@ -350,7 +346,7 @@ Java 提供三种可见性修饰符：
 
 修改器与直接将变量声明为 `public` 的区别在于：修改器内部可加入逻辑约束，拒绝非法值，而 `public` 变量无法施加任何限制。
 
-> [!question] 习题：`Point` 类的访问器与拷贝构造器
+> [!example]- 例题：`Point` 类的访问器与拷贝构造器
 > 为表示笛卡尔平面上坐标点的 `Point` 类编写访问器方法，以及拷贝构造器 `public Point(Point p)`。
 >
 > ```java
@@ -358,101 +354,71 @@ Java 提供三种可见性修饰符：
 >     private double x;
 >     private double y;
 >
->     // 在此补全访问器与拷贝构造器
+>     // 访问器：返回 x 坐标
+>     public double getX() {
+>         return x;
+>     }
+>
+>     // 访问器：返回 y 坐标
+>     public double getY() {
+>         return y;
+>     }
+>
+>     // 拷贝构造器：将 p 的坐标复制到当前对象
+>     public Point(Point p) {
+>         x = p.x;
+>         y = p.y;
+>     }
 > }
 > ```
 >
-> > [!check]-
-> > 这道题同时考察访问器的标准写法，以及同类对象之间访问 `private` 实例变量的规则。
-> >
-> > ```java
-> > public class Point {
-> >     private double x;
-> >     private double y;
-> > 
-> >     // 访问器：返回 x 坐标
-> >     public double getX() {
-> >         return x;
-> >     }
-> > 
-> >     // 访问器：返回 y 坐标
-> >     public double getY() {
-> >         return y;
-> >     }
-> > 
-> >     // 拷贝构造器：将 p 的坐标复制到当前对象
-> >     public Point(Point p) {
-> >         x = p.x;
-> >         y = p.y;
-> >     }
-> > }
-> > ```
-> >
-> > **访问器方法**
-> >
-> > ```java
-> > public double getX() {
-> >     return x;
-> > }
-> > 
-> > public double getY() {
-> >     return y;
-> > }
-> > ```
-> >
-> > - 两个访问器的返回类型都与对应实例变量一致，因此都写作 `double`。
-> > - 方法体只有 `return`，作用是把当前对象的坐标值暴露给外部读取。
-> >
-> > **拷贝构造器**
-> >
-> > ```java
-> > public Point(Point p) {
-> >     x = p.x;
-> >     y = p.y;
-> > }
-> > ```
-> >
-> > - 参数 `p` 是另一个 `Point` 对象，用来提供被复制的坐标值。
-> > - 在同一个类内部，`private` 实例变量对同类的其他对象同样可见，因此 `p.x` 与 `p.y` 可以直接访问。
-> > - 该构造器复制的是坐标值，而不是对象引用，因此新对象与参数对象彼此独立。
+> **访问器方法**
+>
+> ```java
+> public double getX() { return x; }
+> public double getY() { return y; }
+> ```
+>
+> - 返回类型与对应实例变量类型一致，均为 `double`。
+> - 方法体仅含一条 `return` 语句，直接返回实例变量的当前值。
+>
+> **拷贝构造器**
+>
+> ```java
+> public Point(Point p) {
+>     x = p.x;
+>     y = p.y;
+> }
+> ```
+>
+> - 参数 `p` 是同类型 `Point` 对象。
+> - 在同一个类内部，`private` 变量对同类的其他对象实例同样可见，因此 `p.x` 和 `p.y` 可直接访问，无需经由访问器。
+> - 该构造器将 `p` 的坐标值复制到当前对象（`this`）的实例变量中。
 
-> [!question] 习题：`Die` 类的受限 `setFaceValue`
+> [!example]- 例题：`Die` 类的受限 `setFaceValue`
 > 改写 `Die` 类的 `setFaceValue` 方法，使 `faceValue` 仅在参数值位于 $[1,\ \text{MAX}]$ 范围内时才更新。
->
-> 此示例引用于 [[ELEC2543 Ch.5 Data Visibility#^die-java-example|5.1 数据作用域与实例数据]]，此处在此基础上补充修改器中的取值约束。
->
-> `Die` 类中现有的方法如下：
 >
 > ```java
 > public void setFaceValue(int value) {
->     faceValue = value;
+>     if ((value >= 1) && (value <= MAX)) {
+>         faceValue = value;
+>     }
 > }
 > ```
 >
-> > [!check]-
-> > 这道题的关键是把“状态是否合法”的判断收进修改器内部，而不是让调用方直接改写实例变量。
-> >
-> > ```java
-> > public void setFaceValue(int value) {
-> >     if ((value >= 1) && (value <= MAX)) {
-> >         faceValue = value;
-> >     }
-> > }
-> > ```
-> >
-> > **条件判断**
-> >
-> > ```java
-> > if ((value >= 1) && (value <= MAX))
-> > ```
-> >
-> > - 该条件同时检查下界与上界，只有参数位于合法范围内时才执行赋值。
-> > - 若 `value` 超出范围，方法不执行任何操作，`faceValue` 保持原值不变。
-> >
-> > **与 `public` 变量的对比**
-> >
-> > - 若 `faceValue` 是 `public`，客户端可以直接执行 `die.faceValue = 100`，对象无法阻止非法状态进入自身。
-> > - 通过修改器加入范围检查后，状态约束被封装进类内部，对象始终能维持合法点数。
+> **条件判断**
+>
+> ```java
+> if ((value >= 1) && (value <= MAX))
+> ```
+>
+> - 同时检查下界（不小于 1）与上界（不超过 `MAX`，即 6），两个条件均满足时才执行赋值。
+> - 若 `value` 超出范围，方法不执行任何操作，`faceValue` 保持原值不变。
+>
+> **与 `public` 变量的对比**
+>
+> - 若 `faceValue` 为 `public`，客户端可执行 `die.faceValue = 100`，无任何约束。
+> - 通过修改器加入范围检查后，非法赋值被静默拒绝，对象状态始终合法。
 
 > [!note]
 > 当非法输入被静默忽略时，调用方不会收到任何错误提示。更健壮的设计应在值非法时抛出异常 (*Exception*)，或返回一个表示操作结果的布尔值，后续章节将讨论异常处理机制。
@@ -462,8 +428,6 @@ Java 提供三种可见性修饰符：
 方法声明 (*Method Declaration*) 指定了方法被调用时所执行的代码。调用方法时，控制流跳转至该方法并执行其代码，执行完毕后返回调用位置继续执行。
 
 #### 控制流 (*Control Flow*)
-
-方法调用本质上是控制权在不同代码块之间的转移过程。
 
 - 若被调用方法与调用方在同一个类中，直接使用方法名调用：
   ```java
@@ -477,15 +441,18 @@ Java 提供三种可见性修饰符：
 
 #### 方法头 (*Method Header*)
 
-方法头的一般形式为：`<返回类型> <方法名>(<参数列表>)`
+方法声明以方法头开始，指定返回类型、方法名与参数列表：
 
 ```java
 char calc(int num1, int num2, String message)
 ```
 
-- 返回类型：`char`，方法执行完毕后返回一个 `char` 值。
-- 方法名：`calc`。
-- 参数列表 (*Parameter List*)：指定每个参数的类型与名称。
+- 返回类型：
+	`char`，方法执行完毕后返回一个 `char` 值。
+- 方法名：
+	`calc`。
+- 参数列表 (*Parameter List*)：
+	指定每个参数的类型与名称。
 - 参数列表中的参数名称称为形式参数 (*Formal Parameter*)。
 
 #### 方法体 (*Method Body*)
@@ -506,11 +473,11 @@ char calc(int num1, int num2, String message)
 
 #### `return` 语句
 
-`return` 语句负责结束当前方法，并在需要时把结果交还给调用方。
-
-- 返回类型为 `void` 的方法不返回任何值，可省略 `return` 语句，或使用不带表达式的 `return`。
-- 返回类型非 `void` 时，`return` 语句的一般形式为：`return <表达式>;`
-- `return` 后表达式的类型必须与方法头中声明的返回类型一致。
+- 返回类型为 `void` 的方法不返回任何值，可省略 `return` 语句或使用不带表达式的 `return`。
+- 返回类型非 `void` 时，`return` 表达式的类型须与声明的返回类型一致：
+  ```java
+  return expression;
+  ```
 
 #### 参数传递 (*Parameter Passing*)
 
@@ -528,8 +495,6 @@ char calc(int num1, int num2, String message) { ... }
 - 这种传递方式称为值传递 (*Pass by Value*)：方法内对形式参数的修改不影响调用方的实际参数。
 
 #### 局部数据的生命周期
-
-局部数据只在一次方法调用的执行区间内存在，超出该区间后即失去可访问性。
 
 - 方法的形式参数本质上也是局部变量，方法调用时自动创建，方法结束时销毁。
 - 实例变量声明于类级别，其生命周期与所属对象一致，对象存在则变量存在。
@@ -611,8 +576,6 @@ char calc(int num1, int num2, String message) { ... }
 
 #### 构造器注意事项
 
-构造器在语法形式上与普通方法相近，但其识别条件与调用时机完全不同。
-
 - 构造器的方法头不指定任何返回类型，包括 `void` 也不写。
 - 若误将构造器写为带返回类型的方法，该方法将成为一个与类同名的普通方法，而非构造器，对象创建时不会调用它。
 - 若类中未定义任何构造器，Java 自动提供一个无参默认构造器 (*Default Constructor*)。
@@ -620,19 +583,8 @@ char calc(int num1, int num2, String message) { ... }
 > [!note]
 > 一旦类中显式定义了任意构造器，默认构造器将不再自动提供。若仍需无参构造，须手动定义。
 
-> [!example]- 示例：`Account.java` / `Transactions.java`
-> 这一组程序综合展示封装、访问器、返回值、格式化输出与驱动程序之间的配合方式，并验证多个账户对象如何各自维护独立状态。
->
-> > [!info]- UML 框图
-> >
-> > ```
-> > Transactions.java
-> >         |
-> >         v
-> >    Account.java
-> > ```
->
-> `Account.java` 定义银行账户的实例数据与对外服务方法。
+> [!example]- 示例：`Account.java` + `Transactions.java`
+> 演示多个银行账户对象的创建与方法调用，验证每个对象独立维护自身状态。
 >
 > ```java
 > // Account.java
@@ -689,8 +641,6 @@ char calc(int num1, int num2, String message) { ... }
 > }
 > ```
 >
-> `Transactions.java` 负责创建多个账户对象，并调用其方法观察状态变化。
->
 > ```java
 > // Transactions.java
 > public class Transactions
@@ -722,7 +672,6 @@ char calc(int num1, int num2, String message) { ... }
 > ```
 >
 > 输出：
->
 > ```
 > Smith balance after deposit: 540.0
 > Smith balance after withdrawal: 107.75

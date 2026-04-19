@@ -5,17 +5,17 @@
 `Post:` [[ELEC2543 Ch.9 Method]]
 
 > [!abstract]
-> 数组 (*Array*) 与动态列表 (*ArrayList*) 是 Java 中最基础的线性数据结构，也是后续讨论数据组织、对象集合与容器类的起点。
+> 数组 (_Array_) 与动态列表 (_ArrayList_) 是 Java 中最基础的线性数据结构，属于集合框架与内存管理的核心入门内容。
 >
-> Java 将数组设计为对象，必须通过 `new` 创建且长度固定；`ArrayList` 则提供可变长度与更丰富的增删查操作，用于弥补原生数组在插入、删除与容量管理上的局限。这一区分体现了 Java 在固定结构与动态容器之间的分层设计。
+> Java 中数组本身是对象，必须通过 `new` 实例化，且长度固定；而 `ArrayList` 作为 `java.util` 包中的泛型容器类，提供了动态扩容与丰富的增删查接口，弥补了原生数组在灵活性上的不足。两者的设计取舍体现了 Java 在性能与易用性之间的平衡。
 >
-> 本章围绕数组的声明与初始化、索引访问与边界检查、对象数组、二维数组，以及 `ArrayList` 的泛型声明与常用操作展开，重点比较固定长度数组与动态列表在表示方式与使用场景上的差异。
+> 本章涵盖数组的声明与实例化、索引访问与边界检查、对象数组的引用语义、二维数组结构，以及 `ArrayList` 的声明、泛型参数、常用方法（`add`、`remove`、`get`、`indexOf`、`size`）。
 ```table-of-contents
 maxLevel: 3
 ```
 ## 8.1 数组基础
 
-数组 (*Array*) 是一个有序的值列表，整个数组共享同一名称，每个值通过数字索引访问。大小为 $N$ 的数组，其索引范围为 $0$ 到 $N-1$。
+数组 (*Array*) 是一个有序的值列表，整个数组共享单一名称，每个值通过数字索引访问。大小为 $N$ 的数组索引范围为 $0$ 到 $N-1$。
 
 以数组 `scores` 为例：
 
@@ -25,25 +25,28 @@ maxLevel: 3
 scores ------> |  79 |  87 |  94 |  82 |  67 |  98 |  87 |  81 |
                +-----+-----+-----+-----+-----+-----+-----+-----+
 
-该数组包含 8 个整数值，索引范围为 0 到 7
+该数组包含 10 个整数值，索引范围为 0 到 9
 ```
 
-数组中存储的每个值称为数组元素 (*Array Element*)，所有元素必须具有同一元素类型 (*Element Type*)。元素类型既可以是基本类型，如 `int` 、`double` ，也可以是对象引用，如 `String` 或自定义类；数组本身则始终是对象，因此必须通过 `new` 实例化。
+- 数组中存储的每个值称为**数组元素** (*Array Element*)。
+- 所有元素必须是同一类型，该类型称为**元素类型** (*Element Type*)。
+- 元素类型可以是基本类型（如 `int`、`double`）或对象引用（如 `String`、自定义类）。
+- 在 Java 中，数组本身是一个对象，因此必须通过 `new` 实例化。
 
-数组的声明语法有两种等价形式：`int[] scores` 或 `int scores[]` 。课程笔记统一采用前一种写法，因为类型与变量名的归属更清晰。
+声明语法有两种等价形式，推荐使用第一种（类型与变量名分离更清晰）：
 
 ```java
 int[] scores;   // 推荐写法
 int scores[];   // 合法但不推荐
 ```
 
-数组的实例化写法为：`scores = new int[10]`
+实例化使用 `new`，并在括号内指定数组大小：
 
 ```java
 scores = new int[10];  // 创建容量为 10 的整型数组
 ```
 
-声明与实例化也可合并为一行：
+声明与实例化可合并为一行：
 
 ```java
 float[] prices = new float[500];
@@ -53,7 +56,7 @@ char[]  codes  = new char[1750];
 > [!note]
 > `int scores[10];` 在 Java 中是非法写法。数组大小只能在 `new` 表达式中指定，不能写在声明的类型或变量名后。这与 C/C++ 的语法不同。
 
-若初始值已知，可使用初始化列表 (*Initializer List*) 直接赋值，此时无需 `new` ，数组大小由列表元素数量自动确定：
+若初始值已知，可使用初始化列表 (*Initializer List*) 直接赋值，此时无需 `new`，数组大小由列表元素数量自动确定：
 
 ```java
 char[] vowels = {'A', 'E', 'I', 'O', 'U'};  // 大小自动为 5
@@ -65,7 +68,7 @@ char[] vowels = {'A', 'E', 'I', 'O', 'U'};  // 大小自动为 5
 scores[2]   // 引用第 3 个元素（索引从 0 开始）
 ```
 
-该表达式代表数组中的一个具体存储位置，因此可以出现在赋值、运算与传参等一切需要该元素类型值的位置。
+该表达式代表一个可存储单个整数的位置，可在任何允许使用整型变量的地方使用，包括赋值、运算和传参。
 
 遍历数组有两种方式。`for-each` 循环语法更简洁，适用于从头到尾顺序处理所有元素的场景；传统 `for` 循环则在需要访问索引时使用：
 
@@ -80,7 +83,7 @@ for (int i = 0; i < 10; i++)
 ```
 
 > [!note]
-> `for-each` 循环又称增强型 `for` 循环 (*Enhanced for Loop*)，仅适用于从最低索引到最高索引顺序遍历全部元素的场景。
+> `for-each` 循环又称作增强型 `for` 循环 (_Enhanced for Loop_)，仅适用于从最低索引到最高索引顺序遍历全部元素的场景。
 >
 > 若需要逆序遍历、跳步访问或修改特定位置的元素，必须使用传统 `for` 循环。
 
@@ -138,26 +141,31 @@ for (int i = 0; i < 10; i++)
 > ```
 > - 使用 `for-each` 循环顺序打印全部 15 个元素，元素间以空格分隔。
 
-> [!question]
-> 声明一个用于表示 $100$ 名儿童年龄的数组，并编写代码打印整数数组 `values` 的每个元素。
+> [!example]- 例题：声明表示 $100$ 名儿童年龄的数组，并编写代码打印整数数组 `values` 的每个元素
+> ```java
+> // 声明并实例化大小为 100 的整型数组
+> int[] ages = new int[100];
 >
-> > [!check]-
-> > 可直接写作：
-> >
-> > ```java
-> > // 声明并实例化可存放 100 个年龄值的整型数组
-> > int[] ages = new int[100];
-> >
-> > // 顺序打印数组 values 的每个元素
-> > for (int value : values)
-> >     System.out.println(value);
-> > ```
-> >
-> > `ages` 的元素类型为 `int`，大小为 $100$，索引范围为 $0$ 到 $99$。打印部分使用增强型 `for` 循环顺序访问 `values` 中的每个元素，因此不需要显式书写索引变量。
+> // 打印数组 values 的每个元素
+> for (int value : values)
+>     System.out.println(value);
+> ```
+> **声明年龄数组**
+> ```java
+> int[] ages = new int[100];
+> ```
+> - 元素类型为 `int`，大小为 $100$，索引范围 $0$ 到 $99$。
+>
+> **遍历打印**
+> ```java
+> for (int value : values)
+>     System.out.println(value);
+> ```
+> - 使用 `for-each` 循环，每次迭代将当前元素赋给临时变量 `value` 并打印。
 
 ## 8.2 边界检查与 `length`
 
-数组一旦创建，其大小便固定不变。Java 运行时会对每次数组访问自动执行边界检查 (*Bounds Checking*)：若使用的索引超出有效范围，解释器将抛出 `ArrayIndexOutOfBoundsException`。
+数组一旦创建，其大小**固定不变**。Java 运行时会对每次数组访问自动执行边界检查 (*Bounds Checking*)：若使用的索引超出有效范围，解释器将抛出 `ArrayIndexOutOfBoundsException`。
 
 每个数组对象都有一个公开常量 `length`，存储该数组的元素个数，通过数组名直接访问：
 
@@ -314,7 +322,8 @@ String[] words = new String[5]; // 仅创建 5 个 null 引用的槽位，未创
 > 此时访问 `words[0]` 不会抛出 `ArrayIndexOutOfBoundsException`（索引 $0$ 在合法范围内），但对 `null` 引用调用方法（如 `words[0].length()`）会抛出 `NullPointerException`。直接打印 `words[0]` 则输出 `null`。
 
 > [!note]
-> 基本类型与对象引用在数组中的默认值如下：
+>
+> 基础元素的默认值为：
 >
 > | 元素类型                        | 默认值             |
 > | --------------------------- | --------------- |
@@ -335,24 +344,9 @@ words[2] = new String("honor");
 ```
 
 > [!example]- 示例：`DVD.java` / `DVDCollection.java` / `Movies.java`
-> 这一组程序共同演示对象数组如何保存对象引用、如何在集合类中逐元素创建对象，以及如何在容量不足时扩展底层数组。
+> 演示对象数组的声明、逐元素实例化、动态扩容，以及跨类协作的完整设计。
 >
-> > [!info]- UML 框图
-> >
-> > ```
-> > Movies
-> >   |
-> >   v
-> > DVDCollection ----contains----> DVD[]
-> >                                   |
-> >                                   v
-> >                                  DVD
-> > ```
->
-> `DVD.java` 负责定义单个 DVD 对象；`DVDCollection.java` 负责管理 `DVD` 对象数组；`Movies.java` 负责创建集合并触发输出。
->
-> **`DVD.java`**
->
+> ** `DVD.java` **
 > ```java
 > import java.text.NumberFormat;
 >
@@ -363,32 +357,33 @@ words[2] = new String("honor");
 >     private double cost;
 >     private boolean bluRay;
 >
->     // 初始化一张 DVD 的基本信息
+>     // 构造器：初始化所有字段
 >     public DVD(String title, String director, int year,
 >                double cost, boolean bluRay) {
->         this.title = title;
+>         this.title    = title;
 >         this.director = director;
->         this.year = year;
->         this.cost = cost;
->         this.bluRay = bluRay;
+>         this.year     = year;
+>         this.cost     = cost;
+>         this.bluRay   = bluRay;
 >     }
 >
->     // 返回当前 DVD 的格式化描述
+>     // 返回该 DVD 的格式化字符串描述
 >     public String toString() {
+> 	    // 获取货币格式化器
 >         NumberFormat fmt = NumberFormat.getCurrencyInstance();
+> 	    // 初始化 description 字符串并添加价格与年份
 >         String description = fmt.format(cost) + "\t" + year + "\t";
+>         // 追加标题与导演
 >         description += title + "\t" + director;
->
+>         // 条件追加蓝光标记
 >         if (bluRay)
->             description += "\tBlu-Ray";
->
+>             description += "\t" + "Blu-Ray";
 >         return description;
 >     }
 > }
 > ```
 >
-> **`DVDCollection.java`**
->
+> ** `DVDCollection.java` **
 > ```java
 > import java.text.NumberFormat;
 >
@@ -396,58 +391,60 @@ words[2] = new String("honor");
 > public class DVDCollection {
 >     private DVD[] collection;  // 存储 DVD 对象引用的数组
 >     private int count;         // 当前已存入的 DVD 数量
->     private double totalCost;  // 当前集合中 DVD 的总价
+>     private double totalCost;  // 所有 DVD 的总价
 >
->     // 初始化容量为 100 的空集合
+>     // 构造器：初始化容量为 100 的空集合
 >     public DVDCollection() {
 >         collection = new DVD[100];
->         count = 0;
->         totalCost = 0.0;
+>         count      = 0;
+>         totalCost  = 0.0;
 >     }
 >
->     // 添加一张 DVD，必要时先扩容
+>     // 添加一张 DVD，若数组已满则先扩容
 >     public void addDVD(String title, String director, int year,
 >                        double cost, boolean bluRay) {
 >         if (count == collection.length)
 >             increaseSize();
->
 >         collection[count] = new DVD(title, director, year, cost, bluRay);
 >         totalCost += cost;
 >         count++;
 >     }
 >
->     // 返回集合的统计信息与所有 DVD 条目
+>     // 返回集合的统计报告
 >     public String toString() {
+> 	    // 获取货币格式化器
 >         NumberFormat fmt = NumberFormat.getCurrencyInstance();
+>         // 初始化 report 字符串并添加分割线
 >         String report = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
+>         // 添加标题
 >         report += "My DVD Collection\n\n";
+>         // 添加 DVD 数量
 >         report += "Number of DVDs: " + count + "\n";
->         report += "Total cost: " + fmt.format(totalCost) + "\n";
->         report += "Average cost: " + fmt.format(totalCost / count);
+>         // 添加总价
+>         report += "Total cost: "     + fmt.format(totalCost) + "\n";
+>         // 添加均价
+>         report += "Average cost: "   + fmt.format(totalCost / count);
+>         // 添加 DVD 列表小标题
 >         report += "\n\nDVD List:\n\n";
->
+>         // 遍历并逐行添加每张 DVD 的 description
 >         for (int dvd = 0; dvd < count; dvd++)
 >             report += collection[dvd].toString() + "\n";
->
 >         return report;
 >     }
 >
->     // 将底层数组容量扩大为原来的两倍
+>     // 将数组容量扩大为原来的两倍
 >     private void increaseSize() {
 >         DVD[] temp = new DVD[collection.length * 2];
->
 >         for (int dvd = 0; dvd < collection.length; dvd++)
 >             temp[dvd] = collection[dvd];
->
 >         collection = temp;
 >     }
 > }
 > ```
 >
-> **`Movies.java`**
->
+> ** `Movies.java` **
 > ```java
-> // 创建集合并添加 DVD
+> // 主类：创建集合并添加 DVD
 > public class Movies {
 >     public static void main(String[] args) {
 >         DVDCollection movies = new DVDCollection();
@@ -482,18 +479,7 @@ words[2] = new String("honor");
 > $19.95  1999  The Matrix      Andy & Lana Wachowski  Blu-Ray
 > ```
 >
-> **整体关系**
->
-> ```java
-> DVDCollection movies = new DVDCollection();
-> movies.addDVD(...);
-> System.out.println(movies);
-> ```
->
-> - `Movies` 负责驱动程序流程，`DVDCollection` 负责管理集合状态，`DVD` 负责表示单个元素。
-> - 这一结构说明对象数组通常不会直接暴露给主程序，而是封装在更高一层的管理类中。
->
-> **`DVD.java` 的作用**
+> ** `DVD` 类的字段与构造器**
 > ```java
 > private String title, director;
 > private int year;
@@ -503,7 +489,7 @@ words[2] = new String("honor");
 > - 所有字段声明为 `private`，符合封装原则，外部只能通过 `toString()` 获取格式化信息。
 > - 构造器使用 `this.` 区分同名的参数与实例变量。
 >
-> **`DVDCollection.java` 的对象数组**
+> ** `DVDCollection` 的对象数组**
 > ```java
 > collection = new DVD[100];
 > ```
@@ -523,7 +509,7 @@ words[2] = new String("honor");
 > - 最后将 `collection` 指向新数组，原数组由垃圾回收器 (*Garbage Collector*) 回收。
 > - 复制的是引用而非对象本身，`DVD` 对象在内存中的位置不变。
 >
-> **逐元素实例化**
+> ** `addDVD` 中的逐元素实例化**
 > ```java
 > collection[count] = new DVD(title, director, year, cost, bluRay);
 > count++;
@@ -569,40 +555,50 @@ jagged[2] = new int[7];         // 第 2 行有 7 列
 ```
 
 > [!note]
-> 锯齿数组不属于课内要求，但理解其存在有助于理解 Java 二维数组“数组的数组”这一结构本质。
+> 锯齿数组不属于课内要求，但理解其存在有助于理解 Java 二维数组"数组的数组"的本质。
 >
 > 在 C/C++ 中，二维数组在内存中是连续存储的矩形块；Java 的二维数组则是通过引用链接的独立一维数组，两者内存布局不同。
 >
-> Java 支持任意维度的多维锯齿数组，但在实际开发中三维及以上的数组较少直接使用，通常以对象封装或集合类替代，以提高可读性与可维护性。
+> Java 支持任意维度的**多维锯齿数组**，但在实际开发中三维及以上的数组较少直接使用，通常以对象封装或集合类替代，以提高可读性与可维护性。
 
 > [!note]
-> 数组在声明时已确定元素类型，所有维度的最终元素必须属于同一类型。
+> 数组在声明时已确定元素类型，所有维度的最终元素**必须是同一类型**。
 
 ## 8.5 `ArrayList` 类
 
-`ArrayList` 是 `java.util` 包中提供的动态数组容器类。它与原生数组一样使用数字索引访问元素，但长度可随元素增删自动调整，因此更适合元素个数无法预先确定的场景。
+`ArrayList` 是 `java.util` 包中提供的一个动态数组容器类。
 
-插入元素时，指定位置及之后的元素会整体后移；删除元素时，后续元素会前移以填补空缺。`ArrayList` 只能存储对象引用，不能直接存储 `int`、`double` 等基本类型；若需保存这些数据，必须使用对应的包装类 (*Wrapper Class*)，如 `Integer`、`Double`。
+与原生数组相比，`ArrayList` 同样使用数字索引访问元素，但其核心优势在于能够根据需要自动扩容与缩容。
 
-声明与实例化 `ArrayList` 时，通常使用泛型 (*Generic*) 语法指定允许存储的对象类型，其一般形式为：`ArrayList<对象类型> 列表名 = new ArrayList<对象类型>()`
+- 当插入新元素时，指定位置及之后的所有元素会自动"向后移动"（索引递增）以腾出空间。
+- 当删除元素时，后续元素会自动"向前坍缩"（索引递减）以填补空缺。
+- `ArrayList` 只能**存储对象引用**，不能直接存储基本数据类型（如 `int`、`double`）。若需存储基本类型，必须使用对应的包装类 (*Wrapper Class*)，如 `Integer`、`Double`。
+
+声明与实例化 `ArrayList` 时，通常使用泛型 (*Generic*) 语法 `<ObjectType>` 来指定集合中允许存储的对象类型：
 
 ```java
+/*
+声明格式：
+ArrayList<Object Type> nameOfArrayList;
+*/
+
 ArrayList<Integer> intList = new ArrayList<Integer>();
+
 ArrayList<String> strList = new ArrayList<String>();
 ```
 
 > [!note]
-> 泛型 `<Integer>` 确保列表只能存入整型包装对象，编译器会在编译阶段进行类型检查。
+> 泛型 `<Integer>` 确保了该列表只能存入整型数据，编译器会进行类型检查。
 >
-> 虽然也可声明不带泛型的裸类型 `ArrayList objList;`，但这种写法会失去类型安全性，在现代 Java 中应避免使用。
+> 虽然可以声明不带泛型的裸类型 `ArrayList objList;`（此时可存入任何 `Object`），但这种写法丧失了类型安全性，在现代 Java 开发中应极力避免。
 >
-> > [!quote]
-> > 关于泛型与包装类的进一步说明，将在 [[ELEC2543 Ch.12 Wrapper Class]] 中展开。
+>> [!quote]
+> > 关于泛型的相关知识，将在 [[ELEC2543 Ch.12 Wrapper Class]] 中进一步说明。
 
 `ArrayList` 提供了丰富的内置方法来操作元素：
 
 - `add(element)`：将元素追加到列表末尾。
-- `add(position, element)`：将元素插入到指定索引 `position` 处，原有元素依次后移；`position` 的合法范围为 $0$ 到 `size()`。
+- `add(position, element)`：将元素插入到指定索引 `position` 处，原有元素依次后移；`position` 必须小于 `size()` 。
 - `remove(pos)`：移除并返回指定索引处的元素。
 - `remove(Object o)`：移除列表中首次出现的指定对象（基于 `equals` 方法比较），若移除成功则返回 `true`。
 - `get(pos)`：返回指定索引处的元素。
@@ -616,31 +612,30 @@ ArrayList<String> strList = new ArrayList<String>();
 >
 > public class IntArrayList {
 >     public static void main(String[] args) {
->         // 创建仅保存 Integer 的动态列表
+>         // 实例化 Integer 类型的 ArrayList
 >         ArrayList<Integer> intList = new ArrayList<Integer>();
 >
->         // 依次加入 0、5、10、15、20
+>         // 顺序添加 5 个元素 [0, 5, 10, 15, 20]
 >         for (int i = 0; i < 5; i++) {
 >             intList.add(i * 5);
 >         }
 >
->         // 输出当前大小与全部元素
 >         System.out.println("size of intList: " + intList.size());
 >         System.out.println(intList);
 >
->         // 删除索引 2 处的元素
+>         // 移除索引为 2 的元素
 >         intList.remove(2);
 >         System.out.println("size of intList: " + intList.size());
 >         System.out.println(intList);
 >
->         // 查找元素 15 当前所在的位置
+>         // 查找特定元素的位置
 >         int location = intList.indexOf(15);
 >         System.out.println("The index of 15 is " + location);
 >
->         // 读取索引 0 处的元素
+>         // 访问索引为 0 的元素
 >         System.out.println("The first element is : " + intList.get(0));
 >
->         // 在索引 location 处插入新元素
+>         // 在特定位置插入新元素
 >         intList.add(location, 100);
 >         System.out.println(intList);
 >     }
@@ -690,26 +685,24 @@ ArrayList<String> strList = new ArrayList<String>();
 > [!example]- 示例：`JavaExample.java`
 > 演示字符串 `ArrayList` 的按对象删除与 `for-each` 遍历。
 > ```java
-> import java.util.ArrayList;
+> import java.util.*;
 >
 > public class JavaExample {
->     public static void main(String[] args) {
->         // 创建仅保存 String 的动态列表
+>     public static void main(String args[]) {
+>         // 创建仅允许添加 String 的 ArrayList
 >         ArrayList<String> obj = new ArrayList<String>();
 >
->         // 先加入 5 个初始元素
 >         obj.add("Ajeet");
 >         obj.add("Harry");
 >         obj.add("Chaitanya");
 >         obj.add("Steve");
 >         obj.add("Anuj");
 >
->         // 输出原始列表
 >         System.out.println("Original ArrayList:");
 >         for (String str : obj)
 >             System.out.println(str);
 >
->         // 在指定索引处插入两个新元素
+>         // 在指定索引处添加元素
 >         obj.add(0, "Rahul");  // 插入到首位
 >         obj.add(1, "Justin"); // 插入到第二位
 >
@@ -717,7 +710,7 @@ ArrayList<String> strList = new ArrayList<String>();
 >         for (String str : obj)
 >             System.out.println(str);
 >
->         // 按对象内容删除元素
+>         // 按对象内容移除元素
 >         obj.remove("Chaitanya");
 >         obj.remove("Harry");
 >
@@ -725,7 +718,7 @@ ArrayList<String> strList = new ArrayList<String>();
 >         for (String str : obj)
 >             System.out.println(str);
 >
->         // 再按索引删除元素
+>         // 按索引移除元素
 >         obj.remove(1); // 移除当前索引 1 的元素
 >
 >         System.out.println("Final ArrayList:");
@@ -773,10 +766,9 @@ ArrayList<String> strList = new ArrayList<String>();
 > **按对象内容删除**
 > ```java
 > obj.remove("Chaitanya");
-> obj.remove("Harry");
 > ```
-> - 这里传入的是字符串对象而非数字索引，因此 `ArrayList` 会按内容查找第一个相等元素并将其移除。
-> - 这种写法适用于已知目标值、但不想先手动查找索引的位置。
+> - 传入字符串对象而非数字索引，`ArrayList` 会遍历列表，找到第一个与 `"Chaitanya"` 相等的元素并将其移除。
+> - 这种重载方法极大地方便了在不知道确切索引时删除特定数据的操作。
 >
 > **遍历**
 > ```java

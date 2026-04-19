@@ -5,121 +5,145 @@
 `Post:` [[ELEC2543 Ch.8 Arrays and ArrayList]]
 
 > [!abstract]
-> 枚举类型 (_Enumerated Type_) 是一种用于定义有限取值集合的自定义类型，属于类型安全的常量管理机制，广泛应用于表示状态、方向、季节等离散值的场景。
+> 枚举类型 (*Enumerated Type*) 是用于表示有限离散取值集合的自定义类型，适合描述方向、季节、状态等只能取若干固定值之一的场景。
 >
-> Java 的枚举类型以 `enum` 关键字定义，本质上是一种特殊的类 (_Class_)。与 C/C++ 中枚举仅为整数别名不同，Java 的 `enum` 是完整的类结构，支持构造器、实例变量与方法定义，同时内置序数值管理与名称查询机制，兼顾了类型安全与面向对象的扩展性。
+> Java 使用 `enum` 关键字定义枚举，并将其实现为一种特殊的类 (*Class*)。与仅把枚举视为整数别名的语言不同，Java 枚举同时提供类型安全、常量命名、内置方法以及实例变量、构造器与方法扩展能力，使“有限取值集合”既可作为常量系统，也可作为完整对象结构。
 >
-> 本章涵盖以下核心模块：枚举类型的基本声明与使用、序数值与内置方法（`ordinal()`、`name()`、`values()`），以及将枚举类型扩展为含构造器与实例变量的完整类结构。
+> 本章依次介绍枚举类型的基本声明与赋值方式、`ordinal()` / `name()` / `values()` 等内置方法，以及将枚举扩展为带实例变量、构造器和访问器的类结构。
 ```table-of-contents
 maxLevel: 3
 ```
+
 ## 7.1 枚举类型的基本使用
 
-**枚举类型** (*Enumerated Type*) 允许程序员定义一组具名的固定**枚举常量**集合，作为一种新的数据类型使用。当某个变量的取值只能是若干预定义值之一时（如季节、方向、口味），使用枚举类型可以使代码更具可读性，并由编译器保证类型安全。
+枚举类型 (*Enumerated Type*) 允许程序员定义一组具名且固定的枚举常量 (*Enumerated Constants*)，并把它们作为一种新的类型使用。当某个变量的取值范围天然有限时，枚举能同时提供更清晰的语义和更严格的类型约束。
 
-其声明语法为：
+其声明语法为：`enum <类型名> {<常量 1>, <常量 2>, <常量 3>, ...}`
 
 ```java
-enum TypeName {VALUE1, VALUE2, VALUE3, ...}
-
 enum Season {WINTER, SPRING, SUMMER, FALL}
 ```
 
-- 枚举类型可以声明在类的内部 ，也可以作为独立文件声明（此时需加 `public` 修饰符）。
+- 枚举类型可以声明在类内部，也可以作为独立文件声明。
+- 若枚举作为独立文件且需要对外公开，应使用 `public` 修饰。
 - 枚举常量名按惯例全部大写。
 
-枚举变量的声明与赋值语法与普通变量一致，但赋值时须通过类型名访问常量：
+枚举变量的声明与赋值方式和普通变量一致，但赋值时必须通过 `<类型名>.<常量名>` 的形式访问目标常量。
 
 ```java
-Season time;            // 声明一个类型为 Season 的变量 time
-time = Season.SPRING;   // 将枚举常量 Season.SPRING 赋值给变量 time
+Season time;
+time = Season.SPRING;
 ```
 
 > [!note]
-> 不能直接写 `time = SPRING;`，必须通过 `Season.SPRING` 访问。这与 C 的枚举不同，Java 枚举常量不在当前作用域内自动可见。
+> 不能直接写 `time = SPRING;`，必须写成 `Season.SPRING`。Java 不会像某些语言那样把枚举常量自动暴露到当前作用域。
 >
-> 同时，`Season time` 的类型是 `Season`，而非 `int` 或 `String`。编译器会拒绝如下赋值：
+> 同时，`time` 的类型是 `Season`，而不是 `int` 或 `String`。
+>
 > > [!bug]
 > > ```java
 > > time = "SPRING";   // 编译错误：类型不匹配
 > > time = 1;          // 编译错误：类型不匹配
 > > ```
 
-每个枚举常量在内部以整数存储，称为序数值 (*Ordinal Value*)，从 0 开始依次递增。
+每个枚举常量在内部都对应一个从 0 开始的序数值 (*Ordinal Value*)，按其在声明列表中的顺序依次递增。
 
-每个枚举变量提供以下两个常用内置方法：
+枚举变量最常见的两个内置方法为：
 
-- `ordinal()`：返回该枚举常量的序数值（`int` 类型），即其在声明列表中的位置，从 0 起计。
-- `name()`：返回该枚举常量的名称（`String` 类型），与声明时的标识符完全一致。
+- `ordinal()`：返回该常量的序数值，即其在声明列表中的位置索引。
+- `name()`：返回该常量的名称字符串，与声明时的标识符完全一致。
 
-将枚举变量直接用于字符串拼接时，效果与调用 `name()` 相同，均输出常量名称。
+将枚举变量直接用于字符串拼接时，输出效果与调用 `name()` 一致，都会得到常量名称。
 
 > [!note]
-> 枚举变量的优势：
-> - 类型安全：
-> 	  编译器拒绝非法赋值。直接使用字符串时，`sunRise = "EASTT"` 这样的拼写错误在编译期不会被发现，运行时才会出错；使用枚举时，`Direction.EASTT` 在编译期即报错。
+> 枚举变量的优势主要体现在类型安全、可读性与取值范围约束上。
 >
-> - 可读性：
-> 	  `Direction.EAST` 代码意图一目了然。
->
-> - 约束取值范围：
-> 	  `Direction` 类型的变量只能持有 `NORTH`、`EAST`、`SOUTH`、`WEST` 四个值之一，不可能出现 `5` 或 `"northwest"` 这样的非法值。
->
-> - IDE 支持：
-> 	  使用枚举时，IDE 可以自动补全所有合法常量，减少手动输入错误。
+> - 编译器会拒绝非法赋值，拼写错误也能在编译期被发现。
+> - `Direction.EAST` 这类写法比整数或裸字符串更能直接表达程序意图。
+> - `Direction` 类型的变量只能持有声明中给出的合法常量，不能落入任意整数或任意字符串。
 
-> [!example]- 示例：`Direction.java` + `Sun.java`
-> 演示枚举类型在独立文件中声明，并在另一个类中使用枚举变量与字符串拼接输出。
+> [!example]- 示例：`Direction.java` / `Sun.java`
+> 观察枚举在独立文件中声明后，如何被另一个类引用并参与字符串输出。
+>
+> > [!info]- UML 框图
+> >
+> > ```
+> > Direction.java
+> >   └─ 定义枚举类型 Direction
+> > 
+> > Sun.java
+> >   └─ 在 main() 中使用 Direction.EAST / Direction.WEST
+> > ```
 >
 > ```java
 > // Direction.java
-> enum Direction {NORTH, EAST, SOUTH, WEST}   // Sun.java 和 Direction.java 位于同一包内，无需加 public
+> enum Direction {NORTH, EAST, SOUTH, WEST}
 > ```
+>
 > ```java
 > // Sun.java
 > public class Sun {
 >     public static void main(String[] args) {
->         Direction sunRise = Direction.EAST;   // 序数值为 1
->         Direction sunSet = Direction.WEST;    // 序数值为 3
+>         Direction sunRise = Direction.EAST;
+>         Direction sunSet = Direction.WEST;
 >
->         System.out.println("The sun rises in the " + sunRise +
->                            " and sets in the " + sunSet + ".");
+>         System.out.println("The sun rises in the " + sunRise
+>                            + " and sets in the " + sunSet + ".");
 >     }
 > }
 > ```
 >
 > 输出：
+>
 > ```
 > The sun rises in the EAST and sets in the WEST.
 > ```
 >
-> **枚举声明**
+> **整体关系**
+>
+> - `Direction.java` 负责定义枚举类型本身，`Sun.java` 负责创建枚举变量并观察其输出行为。
+> - 该组程序说明：枚举既可以独立成文件，也可以像普通类型一样被其他类直接使用。
+>
+> **`Direction.java` 的作用**
+>
 > ```java
 > enum Direction {NORTH, EAST, SOUTH, WEST}
 > ```
-> - 声明为独立文件，不加 `public`，因此与 `Sun.java` 位于同一包内即可访问。
-> - 四个常量的序数值依次为 0、1、2、3。
+> - 四个常量按声明顺序形成一个新的离散类型。
+> - 若不加 `public`，则该枚举可被同一包中的其他类访问。
 >
-> **枚举变量赋值与字符串拼接**
+> **`Sun.java` 的作用**
+>
 > ```java
 > Direction sunRise = Direction.EAST;
-> System.out.println("... " + sunRise + " ...");
+> Direction sunSet = Direction.WEST;
 > ```
-> - 枚举变量在字符串拼接中自动调用 `toString()`，输出结果与 `name()` 相同，即常量名称字符串。
-
-> [!example]- 示例：`IceCream.java`
-> 演示枚举类型声明在类内部，以及 `ordinal()`、`name()` 方法与枚举赋值的使用。
+> - 两个变量的类型都是 `Direction`，因此只能接收 `Direction` 中已声明的常量。
+> - `Direction.EAST` 与 `Direction.WEST` 分别对应序数值 1 和 3。
+>
+> **字符串拼接输出**
 >
 > ```java
-> public class IceCream {
+> System.out.println("The sun rises in the " + sunRise
+>                    + " and sets in the " + sunSet + ".");
+> ```
+> - 枚举变量参与字符串拼接时会输出常量名称。
+> - 因此运行结果中的 `EAST` 与 `WEST` 本质上对应的是各自的 `name()` 返回值。
+
+> [!example]- 示例：`IceCream.java`
+> 观察枚举声明在类内部时，`ordinal()`、`name()` 与枚举变量赋值如何配合使用。
+>
+> ```java
+> public class IceCream
+> {
 >     // 在类内部声明枚举类型
 >     enum Flavor {COFFEE, VANILLA, STRAWBERRY, CHOCOLATE, MINT}
 >
 >     public static void main(String[] args) {
 >         Flavor cone1, cone2, cone3;
 >
->         cone1 = Flavor.MINT;    // 序数值为 4
->         cone2 = Flavor.COFFEE;  // 序数值为 0
+>         cone1 = Flavor.MINT;
+>         cone2 = Flavor.COFFEE;
 >
 >         System.out.println("cone1 value: " + cone1);
 >         System.out.println("cone1 ordinal: " + cone1.ordinal());
@@ -130,7 +154,7 @@ time = Season.SPRING;   // 将枚举常量 Season.SPRING 赋值给变量 time
 >         System.out.println("cone2 ordinal: " + cone2.ordinal());
 >         System.out.println("cone2 name: " + cone2.name());
 >
->         cone3 = cone1;  // 枚举变量赋值，cone3 与 cone1 指向同一常量
+>         cone3 = cone1;
 >
 >         System.out.println();
 >         System.out.println("cone3 value: " + cone3);
@@ -141,6 +165,7 @@ time = Season.SPRING;   // 将枚举常量 Season.SPRING 赋值给变量 time
 > ```
 >
 > 输出：
+>
 > ```
 > cone1 value: MINT
 > cone1 ordinal: 4
@@ -155,90 +180,105 @@ time = Season.SPRING;   // 将枚举常量 Season.SPRING 赋值给变量 time
 > cone3 name: MINT
 > ```
 >
-> **枚举类型声明**
+> **类内枚举声明**
+>
 > ```java
 > enum Flavor {COFFEE, VANILLA, STRAWBERRY, CHOCOLATE, MINT}
 > ```
-> - 声明在 `IceCream` 类内部，序数值从 0 起：`COFFEE=0`，`VANILLA=1`，`STRAWBERRY=2`，`CHOCOLATE=3`，`MINT=4`。
+> - `Flavor` 声明在 `IceCream` 类内部，因此它的作用域局限在该类中。
+> - 常量的序数值按声明顺序从 0 递增，`MINT` 的序数值为 4。
 >
-> ** `ordinal()` 与 `name()` 方法**
+> **`ordinal()` 与 `name()`**
+>
 > ```java
-> cone1 = Flavor.MINT;
-> System.out.println("cone1 value: " + cone1);       // 输出 MINT
-> System.out.println("cone1 ordinal: " + cone1.ordinal()); // 输出 4
-> System.out.println("cone1 name: " + cone1.name());  // 输出 MINT
+> System.out.println("cone1 ordinal: " + cone1.ordinal());
+> System.out.println("cone1 name: " + cone1.name());
 > ```
-> - `cone1` 直接参与字符串拼接时输出常量名，与 `name()` 结果一致。
-> - `ordinal()` 返回 `MINT` 在声明列表中的位置索引 4。
+> - `ordinal()` 返回常量在声明列表中的位置索引。
+> - `name()` 返回常量标识符本身，因此 `cone1` 的名称为 `MINT`。
 >
 > **枚举变量赋值**
+>
 > ```java
 > cone3 = cone1;
 > ```
-> - 枚举变量赋值使 `cone3` 与 `cone1` 指向同一枚举常量，因此两者的所有方法返回值完全相同。
+> - 赋值后，`cone3` 与 `cone1` 指向同一个枚举常量。
+> - 因此二者在输出值、序数值和名称上完全一致。
 
 ## 7.2 枚举类型作为类
 
-枚举类型在 Java 中是一种特殊的类 (*Class*)。除了定义一组固定常量外，枚举还可以包含实例变量、构造器和方法，从而为每个枚举常量附加额外的数据与行为。
+在 Java 中，枚举不是“带名字的整数集合”，而是一种特殊的类 (*Class*)。因此它除了定义固定常量外，还可以继续声明实例变量、构造器和方法，为每个枚举常量附加额外的数据与行为。
 
-枚举作为类时，其结构如下：
+其一般结构可写为：
 
 ```java
 public enum TypeName {
-    VALUE1 (arg1),      // 枚举常量名称(传参)
-    VALUE2 (arg2);      // 常量列表以分号结束
+    VALUE1(arg1),
+    VALUE2(arg2);
 
-    private Type instanceVar;   // 实例变量
+    private Type instanceVar;
 
-    TypeName (Type arg) {     // 隐式构造器，使用枚举常量的参数
+    TypeName(Type arg) {
         instanceVar = arg;
     }
 
-    public Type getInstanceVar() {  // 方法
+    public Type getInstanceVar() {
         return instanceVar;
     }
 }
 ```
 
-- 枚举常量列表必须位于类体的**最前面**，且以分号 `;` 结束（当类体中存在其他成员时）。
-- 枚举的构造器隐式为 `private`（不加访问修饰符），不能在枚举外部手动实例化枚举对象。
-- 每个枚举常量在声明时传入的参数会调用构造器，为该常量的实例变量赋值。
+- 枚举常量列表必须位于类体最前面。
+- 当枚举中还定义了实例变量、构造器或方法时，常量列表末尾必须加分号 `;`。
+- 枚举构造器不能由外部手动调用，其实例创建由枚举常量声明过程隐式完成。
 
 > [!note]
-> 枚举常量本质上是该枚举类型的唯一实例，由 JVM 在类加载时创建，且每个常量只存在一个实例。因此枚举天然适合用于单例模式。
+> 枚举构造器虽然通常不写访问修饰符，但其可见性等效于 `private`。这意味着程序不能在枚举外部写出 `new Season(...)` 之类的代码。
 
-`values()` 方法是每个枚举类型自动提供的静态方法。
+`values()` 是每个枚举类型自动提供的静态方法，用于返回按声明顺序排列的“全部枚举常量数组”。
 
-- 返回包含所有枚举常量的数组。
-- 数组元素按声明顺序排列，类型为该枚举类型。
-
-其常见用法为配合增强型 `for` 循环 (_Enhanced for Loop_) 遍历所有常量：
+其常见用法为：`for (<枚举类型> <变量> : <枚举类型>.values())`
 
 ```java
-for (Season time : Season.values())    // .value() 返回包含所有常量的数组；变量 time 依次指向数组中的下一个枚举常量
-    // : 表示“来自于”
+for (Season time : Season.values())
     System.out.println(time + "\t" + time.getSpan());
 ```
 
-> [!example]- 示例：`Season.java` + `SeasonTester.java`
-> 演示枚举类型作为类，定义实例变量、构造器与方法，并使用 `values()` 遍历所有枚举常量。
+> [!note]
+> 冒号 `:` 在增强型 `for` 循环中可理解为“来自于”。上式表示：变量 `time` 依次取自 `Season.values()` 返回数组中的每个枚举常量。
+
+> [!example]- 示例：`Season.java` / `SeasonTester.java`
+> 观察枚举如何扩展为带实例变量、构造器和访问器的方法结构，并通过 `values()` 遍历全部常量。
+>
+> > [!info]- UML 框图
+> >
+> > ```
+> > Season.java
+> >   └─ 定义枚举 Season
+> >      ├─ 实例变量 span
+> >      ├─ 构造器 Season(String months)
+> >      └─ 方法 getSpan()
+> > 
+> > SeasonTester.java
+> >   └─ 遍历 Season.values() 并输出常量及其月份描述
+> > ```
 >
 > ```java
 > // Season.java
 > public enum Season {
->     WINTER ("December through February"),   // 调用构造器，传入月份描述
->     SPRING ("March through May"),
->     SUMMER ("June through August"),
->     FALL   ("September through November");  // 常量列表以分号结束
+>     WINTER("December through February"),
+>     SPRING("March through May"),
+>     SUMMER("June through August"),
+>     FALL("September through November");
 >
->     private String span;    // 实例变量，存储月份描述
+>     private String span;
 >
->     // 构造器，为每个枚举常量的 span 赋值
->     Season (String months) {
+>     // 构造器：为每个枚举常量绑定月份描述
+>     Season(String months) {
 >         span = months;
 >     }
 >
->     // 访问器方法
+>     // 访问器：返回当前常量对应的月份描述
 >     public String getSpan() {
 >         return span;
 >     }
@@ -247,9 +287,11 @@ for (Season time : Season.values())    // .value() 返回包含所有常量的�
 >
 > ```java
 > // SeasonTester.java
+> import java.util.*;
+>
 > public class SeasonTester {
 >     public static void main(String[] args) {
->         // 使用 values() 获取所有枚举常量并遍历
+>         // 遍历所有枚举常量并输出其描述
 >         for (Season time : Season.values())
 >             System.out.println(time + "\t" + time.getSpan());
 >     }
@@ -257,37 +299,61 @@ for (Season time : Season.values())    // .value() 返回包含所有常量的�
 > ```
 >
 > 输出：
+>
 > ```
-> WINTER    December through February
-> SPRING    March through May
-> SUMMER    June through August
-> FALL      September through November
+> WINTER	December through February
+> SPRING	March through May
+> SUMMER	June through August
+> FALL	September through November
 > ```
 >
-> **枚举常量声明与构造器调用**
+> **整体关系**
+>
+> - `Season.java` 负责定义枚举常量与附属数据，`SeasonTester.java` 负责遍历并展示这些数据。
+> - 该组程序说明：枚举常量不仅有名称和序数值，还能像对象一样携带实例变量和方法。
+>
+> **常量声明与构造器参数**
+>
 > ```java
-> WINTER ("December through February"),
+> WINTER("December through February"),
+> SPRING("March through May"),
+> SUMMER("June through August"),
+> FALL("September through November");
 > ```
-> - 每个常量在声明时传入字符串参数，触发 `Season(String months)` 构造器，将参数赋值给实例变量 `span`。
-> - 四个常量的序数值依次为 0（`WINTER`）至 3（`FALL`）。
+> - 每个常量在声明时都传入一个字符串参数，该参数随后交给构造器处理。
+> - 这些参数使不同常量拥有不同的 `span` 值，而不只是不同的名称。
 >
 > **实例变量与访问器**
+>
 > ```java
 > private String span;
-> public String getSpan() { return span; }
-> ```
-> - `span` 是每个枚举常量独立持有的实例变量，不同常量的 `span` 值各不相同。
-> - `getSpan()` 是普通的实例方法，通过枚举常量直接调用。
 >
-> ** `values()` 方法与增强型 `for` 循环**
+> public String getSpan() {
+>     return span;
+> }
+> ```
+> - `span` 是每个枚举常量各自持有的实例变量。
+> - `getSpan()` 通过当前常量对象返回对应的月份描述。
+>
+> **构造器**
+>
+> ```java
+> Season(String months) {
+>     span = months;
+> }
+> ```
+> - 构造器在每个枚举常量初始化时自动执行。
+> - `months` 的值来自该常量声明时括号中的参数。
+>
+> **`values()` 与增强型 `for`**
+>
 > ```java
 > for (Season time : Season.values())
 >     System.out.println(time + "\t" + time.getSpan());
 > ```
-> - `Season.values()` 返回 `Season[]` 数组，元素按声明顺序排列：`{WINTER, SPRING, SUMMER, FALL}`。
-> - 每次迭代中，`time` 依次指向各枚举常量，`time.getSpan()` 返回对应的月份描述字符串。
+> - `Season.values()` 返回 `Season[]` 数组，元素顺序与声明顺序一致。
+> - 每次循环中，`time` 依次指向一个枚举常量，再调用 `getSpan()` 输出其月份描述。
 
 ---
 `Pre: ` [[ELEC2543 Ch.6 Class Libraries]]
 `Post:` [[ELEC2543 Ch.8 Arrays and ArrayList]]
-
