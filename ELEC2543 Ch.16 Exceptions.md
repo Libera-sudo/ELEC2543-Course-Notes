@@ -620,8 +620,6 @@ throw <异常对象表达式>;
 >
 > `MakeSureInputCorrect.java` 在 `CreatingExceptions` 的基础上使用循环与 `try-catch` 组合，实现"越界则提示并重试、合法则返回并退出循环"的交互模式。自定义异常仍来自 `OutOfRangeException`，但抛出后改由 `main` 方法就地捕获而非继续向上传播。
 >
-> 此示例引用于 [[ELEC2543 Ch.16 Exceptions#16.6 throw 语句与自定义异常|16.6 throw 语句与自定义异常]]，此处在 `CreatingExceptions` 基础上补充"以 `try-catch` 驱动交互式重试"的演进角度。
->
 > ```java
 > // MakeSureInputCorrect.java —— 以 try-catch + 循环实现输入重试
 > import java.util.Scanner;
@@ -809,6 +807,5 @@ Java 提供三种标准 I/O 流：
 
 
 ---
-
 `Pre: ` [[ELEC2543 Ch.15 Polymorphism]]
 `Post:` [[ELEC2543 Ch.17 Recursion]]
