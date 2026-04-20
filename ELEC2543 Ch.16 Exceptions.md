@@ -444,22 +444,22 @@ Java API 中的异常与错误类之间通过继承组织为统一的类层次�
                   │
                Throwable
                   △
-         ┌────────┴────────┐
-         │                 │
-       Error           Exception
-         △                 △
-   ┌─────┼─────┐    ┌──────┼────────────┐
-   │     │     │    │                   │
- Linkage Thread VM  RuntimeException    │
- Error   Death Error    △              │
-         │              │               ├─ IllegalAccessException
-       AWTError         ├─ Arithmetic   ├─ NoSuchMethodException
-                        │    Exception  └─ ClassNotFoundException
-                        ├─ IndexOutOf
-                        │    Bounds
-                        │    Exception
-                        └─ NullPointer
-                             Exception
+         ┌────────┴──────────┐
+         │                   │
+       Error             Exception
+         △                  △
+   ┌─────┼─────┐      ┌──────┼───────────────┐
+   │     │     │      │                      │
+ Linkage Thread VM    RuntimeException       │
+ Error   Death Error      △                 │
+         │                │                  ├─ IllegalAccessException
+       AWTError           ├─ Arithmetic      ├─ NoSuchMethodException
+                          │    Exception     └─ ClassNotFoundException
+                          ├─ IndexOutOf
+                          │    Bounds
+                          │    Exception
+                          └─ NullPointer
+                               Exception
 ```
 
 自定义异常通过继承 `Exception` 类或其某个后代类实现；所选父类取决于新异常的使用意图——若希望该异常成为受检异常，直接继承 `Exception`；若希望保持与运行时异常相同的使用形态，继承 `RuntimeException` 或其后代。
@@ -468,7 +468,7 @@ Java API 中的异常与错误类之间通过继承组织为统一的类层次�
 
 任一异常要么是受检异常 (*Checked Exception*)，要么是非受检异常 (*Unchecked Exception*)。两者的区别在于编译器的约束强度：
 
-- 受检异常必须被捕获，或必须在任何可能抛出或传播它的方法头中通过 `throws` 子句声明，否则编译错误。
+- 受检异常必须**被捕获**，或必须在任何可能抛出或传播它的方法头中通过 `throws` 子句**声明**，否则编译错误。
 - 非受检异常不要求显式处理，但仍可通过 `try-catch` 捕获；Java 中唯一的非受检异常是 `RuntimeException` 及其所有后代。
 - 错误类在"无需显式处理"这一点上与 `RuntimeException` 相似：不应被捕获，也不要求在 `throws` 子句中声明。
 
