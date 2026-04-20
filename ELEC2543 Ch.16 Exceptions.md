@@ -23,10 +23,12 @@ Java 同时将错误 (*Error*) 也建模为对象，但错误通常代表无法�
 
 Java API 已预定义了一批常见异常，程序在遇到异常时有三种处理方式：忽略该异常、在异常发生处直接处理、在程序的其他位置处理。采取何种方式是重要的设计决策，而非单纯的编码选择。
 
-若异常未被任何 `catch` 子句捕获，程序终止并输出调用栈回溯 (*Call Stack Trace*)，其中包含触发异常的代码行以及从 `main` 方法到该行的完整方法调用链。调用栈回溯用于定位异常源与传播路径，是未捕获异常最基本的诊断信息。
+若异常未被任何 `catch` 子句捕获，程序终止并输出**调用栈回溯** (*Call Stack Trace*)，其中包含触发异常的代码行以及从 `main` 方法到该行的完整方法调用链。调用栈回溯用于定位异常源与传播路径，是未捕获异常最基本的诊断信息。
 
 > [!example]- 示例：`Zero.java`
->
+> 
+> ^example-zero-java
+> 
 > `Zero.java` 故意执行整数除零操作以触发一个未被捕获的 `ArithmeticException`，用于观察 JVM 在异常未处理时输出的终止信息与调用栈回溯。
 >
 > ```java
@@ -190,7 +192,7 @@ catch (<异常类型 2> <形参名>) {
 >
 > `Zero2.java` 在 `Zero.java` 的基础上将除零操作放入 `try-catch` 结构，用 `catch` 子句承接 `ArithmeticException`，以对照捕获与未捕获两种情形下程序控制流的差异。
 >
-> 此示例引用于 [[ELEC2543 Ch.16 Exceptions#16.1 异常机制概述|16.1 异常机制概述]]，此处在该示例基础上补充异常被捕获后程序仍可继续执行的角度。
+> 此示例引用于 [[ELEC2543 Ch.16 Exceptions#^example-zero-java|16.1 异常机制概述]]，此处在该示例基础上补充异常被捕获后程序仍可继续执行的角度。
 >
 > ```java
 > // Zero2.java —— 用 try-catch 捕获除零异常
@@ -449,7 +451,7 @@ Java API 中的异常与错误类之间通过继承组织为统一的类层次�
    ┌─────┼─────┐    ┌──────┼────────────┐
    │     │     │    │                   │
  Linkage Thread VM  RuntimeException    │
- Error   Death Error    △               │
+ Error   Death Error    △              │
          │              │               ├─ IllegalAccessException
        AWTError         ├─ Arithmetic   ├─ NoSuchMethodException
                         │    Exception  └─ ClassNotFoundException
