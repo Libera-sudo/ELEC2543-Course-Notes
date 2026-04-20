@@ -39,9 +39,10 @@ die1                    die2
 > `Die` 类的 `toString()` 方法中声明的 `String result` 是局部变量，仅在该方法执行期间存在，无法在类的其他方法中被引用。
 
 > [!example]- 示例：`Die.java`
-> 表示一个六面骰子，演示实例数据与局部数据的声明位置及访问规则。
->
+> 
 > ^die-java-example
+> 
+> 表示一个六面骰子，演示实例数据与局部数据的声明位置及访问规则。
 >
 > ```java
 > public class Die
