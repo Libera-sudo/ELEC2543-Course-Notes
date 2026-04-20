@@ -9,7 +9,7 @@
 >
 > Java 中的方法必须定义在类 (*Class*) 内部，这与 C/C++ 中的独立函数不同。Java 在参数传递上统一采用值传递 (*Pass by Value*)：对基本类型 (*Primitive Type*) 复制值本身，对对象 (*Object*) 复制引用副本。这一设计直接影响方法对外部状态的修改能力。
 >
-> 本章涵盖方法头与方法体的结构、`return` 语句、方法重载 (*Method Overloading*)、参数传递机制、数组作为参数，以及可变长参数列表 (*Variable Length Parameter Lists*)。
+> 本章涵盖方法头与方法体的结构、`return` 语句、方法重载 (*Method Overloading*)、参数传递机制（基本类型与对象）、数组作为参数，以及可变长参数列表 (*Variable Length Parameter Lists*)。
 
 ```table-of-contents
 maxLevel: 3
@@ -40,7 +40,8 @@ char calc(int num1, int num2, String message)
 方法体 (*Method Body*) 是紧跟方法头的花括号块，包含具体执行逻辑：
 
 ```java
-char calc(int num1, int num2, String message) {
+char calc(int num1, int num2, String message)
+{
     int sum = num1 + num2;              // 局部变量
     char result = message.charAt(sum);  // 局部变量
     return result;                      // 返回语句
@@ -78,11 +79,13 @@ return expression;
 重载的每个版本必须具有唯一的签名，否则编译器无法区分。其声明语法与普通方法相同，仅参数列表不同：
 
 ```java
-float tryMe(int x) {
+float tryMe(int x)
+{
     return x + .375f;    // f 后缀声明该常量为 float 类型
 }
 
-float tryMe(int x, float y) {
+float tryMe(int x, float y)
+{
     return x * y;
 }
 ```
@@ -124,14 +127,48 @@ System.out.println(total);            // 根据 total 的类型匹配对应版�
 
 ## 9.3 参数传递机制
 
-方法被调用时，调用处提供的值称为实际参数 (*Actual Parameter*)，方法头中声明的变量称为形式参数。Java 的参数传递规则统一为值传递：实际参数的值被复制到对应的形式参数中，这一过程等价于一次赋值操作。对基本类型（`int`、`double`、`char` 等）而言，复制的是值本身，形式参数获得一份独立副本；对对象而言，复制的是引用 (*Reference*)，形式参数与实际参数成为同一对象的别名 (*Alias*)。
+方法被调用时，调用处提供的值称为实际参数 (*Actual Parameter*)，方法头中声明的变量称为形式参数。Java 的参数传递规则统一为值传递：实际参数的值被复制到对应的形式参数中，这一过程等价于一次赋值操作。基本类型与对象类型在此规则下表现出不同的行为。
+
+#### 基本类型参数
+
+基本类型（`int`、`double`、`char` 等）传入方法时，形式参数获得的是实际参数值的一份独立副本。方法内对形式参数的任何修改不会影响调用处的原始变量。
+
+```java
+// 调用处
+int a1 = 111;
+modifier.changeValues(a1, ...);  // a1 的值 111 被复制给形式参数
+
+// 方法内
+public void changeValues(int f1, ...)
+{
+    f1 = 999;  // 仅修改副本，a1 仍为 111
+}
+```
+
+#### 对象类型参数
+
+对象类型传入方法时，形式参数获得的是引用 (*Reference*) 的副本。形式参数与实际参数成为同一对象的别名 (*Alias*)，通过形式参数调用方法修改对象的内部状态，会直接影响原始对象。
+
+```java
+// 调用处
+Num a2 = new Num(222);
+modifier.changeValues(..., a2, ...);  // a2 的引用被复制给形式参数 f2
+
+// 方法内
+public void changeValues(..., Num f2, ...)
+{
+    f2.setValue(888);  // 通过引用修改对象内部状态，a2 所指对象的值变为 888
+}
+```
 
 > [!tip]
 > Java 对基本类型与对象类型都采用值传递，区别在于被复制的"值"是什么。
 >
 > **基本类型**
 >
-> 复制的是值本身，形式参数与实际参数在内存中是相互独立的两份数据。对形式参数赋值只改写副本，不影响调用处。
+> 复制的是值本身，形式参数与实际参数在内存中是相互独立的两份数据。
+>
+> - 对形式参数赋值只改写副本，不影响调用处。
 >
 > **对象类型**
 >
@@ -142,6 +179,10 @@ System.out.println(total);            // 根据 total 的类型匹配对应版�
 
 > [!note]
 > C++ 支持真正的按引用传递（传递变量地址），Java 没有该机制。Java 中对对象的操作之所以"看起来像按引用传递"，是因为复制的是引用副本，两端共享同一对象；但在方法内将形式参数重新指向新对象（如 `f3 = new Num(777)`）时，调用处的原始引用不受影响，这一点与 C++ 的按引用传递有本质不同。
+
+## 9.4 对象作为参数
+
+将对象传入方法时，形式参数与实际参数共享同一对象。修改对象内部状态通过共享引用作用于同一对象，调用处可见；而将形式参数重新指向新对象只改变引用副本的指向，不影响调用处的原始引用变量。
 
 > [!example]- 示例：`Num.java` / `ParameterModifier.java` / `ParameterTester.java`
 >
@@ -155,33 +196,36 @@ System.out.println(total);            // 根据 total 的类型匹配对应版�
 > > │  + main            │               │  + changeValues(int,Num,Num) │
 > > └────────────────────┘               └──────────────────────────────┘
 > >           │                                        │
-> >        创建 / 持有                                 操作
+> >        创建 / 持有                              操作 / 重定向
 > >           │                                        │
-> >           └──────────────┬─────────────────────────┘
-> >                          ▼
-> >               ┌──────────────────────┐
-> >               │         Num          │
-> >               │  - value : int       │
-> >               │  + Num(int)          │
-> >               │  + setValue(int)     │
-> >               │  + toString()        │
-> >               └──────────────────────┘
+> >           ▼                                        ▼
+> >        ┌──────────────────────────────┐
+> >        │            Num               │
+> >        │  - value : int               │
+> >        │  + Num(int)                  │
+> >        │  + setValue(int)             │
+> >        │  + toString()                │
+> >        └──────────────────────────────┘
 > > ```
 >
 > ```java
 > // Num.java —— 封装单个整数的辅助类
-> public class Num {
+> public class Num
+> {
 >     private int value;
 >
->     public Num(int update) {            // 构造器：初始化 value
+>     public Num(int update)            // 构造器：初始化 value
+>     {
 >         value = update;
 >     }
 >
->     public void setValue(int update) {  // 修改内部状态
+>     public void setValue(int update)  // 修改内部状态
+>     {
 >         value = update;
 >     }
 >
->     public String toString() {          // 返回字符串表示
+>     public String toString()          // 返回字符串表示
+>     {
 >         return value + "";
 >     }
 > }
@@ -189,8 +233,10 @@ System.out.println(total);            // 根据 total 的类型匹配对应版�
 >
 > ```java
 > // ParameterModifier.java —— 对三个参数执行不同类型的修改
-> public class ParameterModifier {
->     public void changeValues(int f1, Num f2, Num f3) {
+> public class ParameterModifier
+> {
+>     public void changeValues(int f1, Num f2, Num f3)
+>     {
 >         System.out.println("Before changing the values:");
 >         System.out.println("f1\tf2\tf3");
 >         System.out.println(f1 + "\t" + f2 + "\t" + f3 + "\n");
@@ -208,8 +254,10 @@ System.out.println(total);            // 根据 total 的类型匹配对应版�
 >
 > ```java
 > // ParameterTester.java —— 主程序，调用 changeValues 并观察前后变化
-> public class ParameterTester {
->     public static void main(String[] args) {
+> public class ParameterTester
+> {
+>     public static void main(String[] args)
+>     {
 >         ParameterModifier modifier = new ParameterModifier();
 >
 >         int a1 = 111;
@@ -282,8 +330,10 @@ System.out.println(total);            // 根据 total 的类型匹配对应版�
 >
 > ```java
 > // ParameterModifier.java —— changeValues 替换为新版本
-> public class ParameterModifier {
->     public void changeValues(int a1, Num a2, Num a3) {
+> public class ParameterModifier
+> {
+>     public void changeValues(int a1, Num a2, Num a3)
+>     {
 >         System.out.println("Before changing the values:");
 >         System.out.println("a1\ta2\ta3");
 >         System.out.println(a1 + "\t" + a2 + "\t" + a3 + "\n");
@@ -402,7 +452,7 @@ System.out.println(total);            // 根据 total 的类型匹配对应版�
 > >
 > > 本题中不产生垃圾对象。方法内所有引用操作均在已有对象之间重新指向，没有使用 `new` 创建任何新对象，因此不存在失去所有引用的对象。对比原版 `changeValues` 中的 `f3 = new Num(777)`，该操作创建了一个新对象并在方法结束后失去引用，才会产生垃圾。
 
-## 9.4 数组作为参数
+## 9.5 数组作为参数
 
 数组在 Java 中是对象，因此将数组传入方法时，传递的是数组引用的副本，形式参数与实际参数指向同一块数组内存。在方法内修改数组元素，会直接影响原始数组。
 
@@ -419,28 +469,32 @@ void methodName(int[] arr)  // 形式参数类型为 int[]
 >
 > **传递整个数组 `arr`**
 >
-> 形式参数与原数组共享同一引用，方法内 `arr[i] = x` 修改原数组。
+> - 形式参数与原数组共享同一引用，方法内 `arr[i] = x` 修改原数组。
 >
 > **传递单个元素 `arr[i]`**
 >
-> 元素按基本类型复制为独立副本，方法内对形式参数的修改不影响 `arr[i]`。
+> - 元素按基本类型复制为独立副本，方法内对形式参数的修改不影响 `arr[i]`。
 
 > [!example]- 示例：`BasicArray.java`
 >
-> 此示例引用于 [[ELEC2543 Ch.8 Arrays and ArrayList#^basicarray|BasicArray.java]]，此处在原骨架基础上新增 `changeElement` 方法，并以调用前后的输出对比展示数组作为参数时引用副本指向同一内存的效果。
->
 > `BasicArray.java` 演示将整个数组传入方法后，方法内对元素的修改会反映到原数组。
 >
+> 此示例引用于 [[ELEC2543 Ch.8 Arrays and ArrayList#8.1 数组基础|8.1 数组基础]]，此处在原初始化骨架基础上新增 `changeElement` 方法，展示数组作为参数传递时引用副本指向同一内存的行为。
+>
 > ```java
-> public class BasicArray {
+> public class BasicArray
+> {
 >     // 将数组每个元素乘以 2
->     public static void changeElement(int[] arr) {
->         for (int i = 0; i < arr.length; i++) {
+>     public static void changeElement(int[] arr)
+>     {
+>         for (int i = 0; i < arr.length; i++)
+>         {
 >             arr[i] *= 2;  // 直接修改原数组元素
 >         }
 >     }
 >
->     public static void main(String[] args) {
+>     public static void main(String[] args)
+>     {
 >         final int LIMIT = 5, MULTIPLE = 10;
 >
 >         int[] list = new int[LIMIT];  // 创建长度为 5 的整型数组
@@ -496,7 +550,7 @@ void methodName(int[] arr)  // 形式参数类型为 int[]
 > - `arr.length` 获取数组长度，无需额外传入长度参数。
 > - `arr[i] *= 2` 等价于 `arr[i] = arr[i] * 2`，每个元素翻倍。
 
-## 9.5 可变长参数列表
+## 9.6 可变长参数列表
 
 可变长参数列表允许方法在每次调用时接收数量不固定的同类型参数，无需为不同数量的参数分别定义重载版本。其声明语法使用 `...` 标记：
 
@@ -507,7 +561,8 @@ void methodName(int[] arr)  // 形式参数类型为 int[]
 `...` 告知编译器该参数可接收零个或多个指定类型的值。在方法体内，该参数被视为一个普通数组，可使用 `.length` 获取传入参数的数量，也可用 `for-each` 循环遍历。
 
 ```java
-public double average(int ... list) {
+public double average(int ... list)
+{
     // list 在方法体内等同于 int[] list
 }
 ```
@@ -549,9 +604,11 @@ public double illegal(int ... list, int v)  // 编译错误
 > `VarLengthArray.java` 演示可变长参数的声明与调用，以及与普通参数混用的方式。
 >
 > ```java
-> public class VarLengthArray {
+> public class VarLengthArray
+> {
 >     // 计算任意数量整数的平均值
->     public static double average(int ... list) {
+>     public static double average(int ... list)
+>     {
 >         double sum = 0;
 >
 >         if (list.length == 0) return sum;  // 无参数时返回 0.0
@@ -563,7 +620,8 @@ public double illegal(int ... list, int v)  // 编译错误
 >     }
 >
 >     // 计算可变长参数之和再除以固定参数 v
->     public static double sumDividedBy(int v, int ... list) {
+>     public static double sumDividedBy(int v, int ... list)
+>     {
 >         double sum = 0;
 >
 >         for (int value : list)
@@ -572,7 +630,8 @@ public double illegal(int ... list, int v)  // 编译错误
 >         return sum / v;
 >     }
 >
->     public static void main(String[] args) {
+>     public static void main(String[] args)
+>     {
 >         System.out.println(average());                 // 无参数
 >         System.out.println(average(3, 4));             // 2 个参数
 >         System.out.println(average(3, 4, 10, 20, 30)); // 5 个参数

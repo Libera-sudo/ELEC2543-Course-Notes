@@ -85,6 +85,9 @@ for (int i = 0; i < 10; i++)
 > 若需要逆序遍历、跳步访问或修改特定位置的元素，必须使用传统 `for` 循环。
 
 > [!example]- 示例：`BasicArray.java`
+>
+> ^basicarray
+>
 > 演示数组的声明、初始化、元素修改与遍历输出。
 > ```java
 > public class BasicArray {
