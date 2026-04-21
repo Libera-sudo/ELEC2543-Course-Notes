@@ -2,7 +2,7 @@
 # Chapter 18. 排序
 
 `Pre: ` [[ELEC2543 Ch.17 Recursion]]
-`Post:` [[ELEC2543 Ch.19]]
+`Post:` [[ELEC2543 Ch.19 Data Structures]]
 
 > [!abstract]
 > 排序 (*Sorting*) 指按给定比较规则将一组元素重排为有序序列的操作，是算法课程中最基础的组合问题之一，也是衡量不同算法设计范式表达力与时间复杂度的经典载体。本章默认讨论整型数组的升序 (*Ascending Order*) 重排，并以此为统一背景比较几类算法思路。
@@ -504,4 +504,4 @@ $$
 
 ---
 `Pre: ` [[ELEC2543 Ch.17 Recursion]]
-`Post:` [[ELEC2543 Ch.19]]
+`Post:` [[ELEC2543 Ch.19 Data Structures]]
