@@ -532,7 +532,13 @@ public class Die {
 
 ## 3.5 类的定义规范与代码审查
 
-类的定义一般形式为：`public class <类名> { ... }`
+类的定义一般形式为：
+
+```java
+public class <类名> {
+    <类体>
+}
+```
 
 ```java
 /*

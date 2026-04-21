@@ -37,7 +37,11 @@ int[] scores;   // 推荐写法
 int scores[];   // 合法但不推荐
 ```
 
-数组的实例化写法为：`scores = new int[10]`
+数组的实例化写法为：
+
+```java
+scores = new int[10];
+```
 
 ```java
 scores = new int[10];  // 创建容量为 10 的整型数组
@@ -346,10 +350,14 @@ words[2] = new String("honor");
 > > Movies
 > >   |
 > >   v
-> > DVDCollection ----contains----> DVD[]
-> >                                   |
-> >                                   v
-> >                                  DVD
+> > DVDCollection
+> >   |
+> >   | contains
+> >   v
+> > DVD[]
+> >   |
+> >   v
+> > DVD
 > > ```
 >
 > `DVD.java` 负责定义单个 DVD 对象；`DVDCollection.java` 负责管理 `DVD` 对象数组；`Movies.java` 负责创建集合并触发输出。
@@ -587,7 +595,11 @@ jagged[2] = new int[7];         // 第 2 行有 7 列
 
 插入元素时，指定位置及之后的元素会整体后移；删除元素时，后续元素会前移以填补空缺。`ArrayList` 只能存储对象引用，不能直接存储 `int`、`double` 等基本类型；若需保存这些数据，必须使用对应的包装类 (*Wrapper Class*)，如 `Integer`、`Double`。
 
-声明与实例化 `ArrayList` 时，通常使用泛型 (*Generic*) 语法指定允许存储的对象类型，其一般形式为：`ArrayList<对象类型> 列表名 = new ArrayList<对象类型>()`
+声明与实例化 `ArrayList` 时，通常使用泛型 (*Generic*) 语法指定允许存储的对象类型，其一般形式为：
+
+```java
+ArrayList<对象类型> 列表名 = new ArrayList<对象类型>();
+```
 
 ```java
 ArrayList<Integer> intList = new ArrayList<Integer>();

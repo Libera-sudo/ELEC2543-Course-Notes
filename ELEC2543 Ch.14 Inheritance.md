@@ -343,14 +343,14 @@ public final void criticalMethod() { ... }
 >
 > 例如，若将 `message` 误写为 `messages`，未加 `@Override` 时编译器会认为这是一个新方法；添加 `@Override` 后，编译器会提示 "method does not override or implement a method from a supertype"，及时暴露错误。
 
-> [!question] 习题：True or False?
+> [!question] 习题：判断正误
 > 判断以下语句的真假。
 >
-> - A child class may define a method with the same name as a method in the parent.
-> - A child class can override the constructor of the parent class.
-> - A child class cannot override a `final` method of the parent class.
-> - It is considered poor design when a child class overrides a method from the parent.
-> - A child class may define a variable with the same name as a variable in the parent.
+> - 子类可以定义与父类方法同名的方法。
+> - 子类可以覆写父类构造器。
+> - 子类不能覆写父类的 `final` 方法。
+> - 子类覆写父类方法通常被认为是糟糕设计。
+> - 子类可以定义与父类变量同名的变量。
 >
 > > [!check]-
 > > 第一项为真，子类可以定义与父类同名的方法；若签名相同，则构成覆写。
@@ -373,7 +373,13 @@ public final void criticalMethod() { ... }
 
 构造器**无法被继承**，即使父类构造器声明为 `public`，子类也无法直接继承并使用它。
 
-通过调用父类构造器，子类构造器得以初始化对象中属于父类的字段。调用语法为 `super(参数列表)`，且必须作为子类构造器的**第一条**语句：
+通过调用父类构造器，子类构造器得以初始化对象中属于父类的字段。调用语法为：
+
+```java
+super(<参数列表>);
+```
+
+该语句必须作为子类构造器的**第一条**语句：
 
 ```java
 public class Dictionary2 extends Book2
@@ -651,11 +657,11 @@ public abstract int charge(int base);
 > - `+` 运算符与字符串拼接时，若操作数为对象，Java 自动调用该对象的 `toString()` 方法。
 > - 此处调用的是 `Student.toString()`（覆写版本），而非 `HKUPerson.toString()`。
 
-> [!question] 习题：Object class and abstract class
+> [!question] 习题：`Object` 类与抽象类
 > 回答以下两个问题。
 >
-> - What are some methods defined by the `Object` class?
-> - What is an abstract class?
+> - `Object` 类中定义了哪些常见方法？
+> - 什么是抽象类？
 >
 > > [!check]-
 > > `Object` 类中常见方法包括 `String toString()`、`boolean equals(Object obj)` 与 `Object clone()`。
@@ -950,40 +956,26 @@ public final class ImmutableClass
 > Java 标准库中 `String` 类即被声明为 `final`，因此无法创建 `String` 的子类。这一设计保证了字符串的不可变性与安全性不会被子类破坏。
 
 > [!question] 习题：绘制 UML 类图
->绘制一个 UML 类图，显示一个继承层次结构，其中包含代表不同类型汽车的类，首先由制造商组织。显示至少其中两个类的一些适当的变量和方法名称。
+> 绘制一个 UML 类图，显示一个继承层次结构，其中包含代表不同类型汽车的类，首先由制造商组织。显示至少其中两个类的一些适当的变量和方法名称。
 >
 > > [!check]-
 > > 一种可行结构是先以通用 `Car` 类作为父类，再按制造商派生出 `ToyotaCar`、`HondaCar` 等子类，并在制造商类下继续派生具体车型。
 > >
 > > ```
-> >                 +----------------------+
-> >                 |         Car          |
-> >                 +----------------------+
-> >                 | - vin: String        |
-> >                 | - year: int          |
-> >                 +----------------------+
-> >                 | + start(): void      |
-> >                 | + stop(): void       |
-> >                 +----------------------+
-> >                            △
-> >              ┌─────────────┴─────────────┐
-> >              │                           │
-> >   +----------------------+    +----------------------+
-> >   |      ToyotaCar       |    |       HondaCar       |
-> >   +----------------------+    +----------------------+
-> >   | - hybridMode: boolean|    | - ecoMode: boolean   |
-> >   +----------------------+    +----------------------+
-> >   | + enableHybrid():void|    | + enableEco(): void  |
-> >   +----------------------+    +----------------------+
-> >              △
-> >              │
-> >   +----------------------+
-> >   |        Prius         |
-> >   +----------------------+
-> >   | - batteryLevel: int  |
-> >   +----------------------+
-> >   | + charge(): void     |
-> >   +----------------------+
+> > Car
+> > ├─ vin: String
+> > ├─ year: int
+> > ├─ start(): void
+> > ├─ stop(): void
+> > ├─ ToyotaCar
+> > │  ├─ hybridMode: boolean
+> > │  ├─ enableHybrid(): void
+> > │  └─ Prius
+> > │     ├─ batteryLevel: int
+> > │     └─ charge(): void
+> > └─ HondaCar
+> >    ├─ ecoMode: boolean
+> >    └─ enableEco(): void
 > > ```
 > >
 > > 该结构满足 is-a 关系：`ToyotaCar` 是一种 `Car`，`Prius` 是一种 `ToyotaCar`。变量与方法被放在能覆盖相应对象范围的最高合理层级，避免在多个具体车型中重复定义。

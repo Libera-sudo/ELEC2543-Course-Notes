@@ -96,40 +96,28 @@ day.getTree();              // 编译错误：Holiday 中未声明 getTree()
 >
 > 类层次结构如下：
 > ```
->         +---------------------+
->         |    StaffMember      |  abstract
->         |---------------------|
->         | # name: String      |
->         | # address: String   |
->         | # phone: String     |
->         |---------------------|
->         | + toString(): String|
->         | + pay(): double     |  abstract
->         +---------------------+
->                   △
->          ┌────────┴────────┐
->          │                 │
->  +-------------+   +------------------+
->  |  Volunteer  |   |    Employee      |
->  |-------------|   |------------------|
->  |             |   | # socialSec...   |
->  |-------------|   | # payRate        |
->  | + pay()     |   |------------------|
->  +-------------+   | + toString()     |
->                    | + pay()          |
->                    +------------------+
->                             △
->                    ┌────────┴────────┐
->                    │                 │
->            +-------------+   +-------------+
->            |  Executive  |   |   Hourly    |
->            |-------------|   |-------------|
->            | - bonus     |   | - hoursWork.|
->            |-------------|   |-------------|
->            | + awardBon. |   | + addHours()|
->            | + pay()     |   | + pay()     |
->            +-------------+   | + toString()|
->                              +-------------+
+> StaffMember (abstract)
+> ├─ # name: String
+> ├─ # address: String
+> ├─ # phone: String
+> ├─ + toString(): String
+> ├─ + pay(): double (abstract)
+> ├─ Volunteer
+> │  └─ + pay()
+> └─ Employee
+>    ├─ # socialSecNumber: String
+>    ├─ # payRate: double
+>    ├─ + toString()
+>    ├─ + pay()
+>    ├─ Executive
+>    │  ├─ - bonus: double
+>    │  ├─ + awardBonus(double)
+>    │  └─ + pay()
+>    └─ Hourly
+>       ├─ - hoursWorked: int
+>       ├─ + addHours(int)
+>       ├─ + pay()
+>       └─ + toString()
 >
 > ```
 >

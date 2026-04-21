@@ -478,7 +478,11 @@ Java 提供三种可见性修饰符：
 
 #### 方法头 (*Method Header*)
 
-方法头的一般形式为：`<返回类型> <方法名>(<参数列表>)`
+方法头的一般形式为：
+
+```java
+<返回类型> <方法名>(<参数列表>)
+```
 
 ```java
 char calc(int num1, int num2, String message)
@@ -510,7 +514,10 @@ char calc(int num1, int num2, String message)
 `return` 语句负责结束当前方法，并在需要时把结果交还给调用方。
 
 - 返回类型为 `void` 的方法不返回任何值，可省略 `return` 语句，或使用不带表达式的 `return`。
-- 返回类型非 `void` 时，`return` 语句的一般形式为：`return <表达式>;`
+- 返回类型非 `void` 时，`return` 语句的一般形式为：
+  ```java
+  return <表达式>;
+  ```
 - `return` 后表达式的类型必须与方法头中声明的返回类型一致。
 
 #### 参数传递 (*Parameter Passing*)

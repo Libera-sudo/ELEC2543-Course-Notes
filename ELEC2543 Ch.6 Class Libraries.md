@@ -90,7 +90,13 @@ name = name.replace('E', 'X'); // 原对象不变，name 现在指向新对象 "
 
 原字符串对象 `"ELEC 2543"` 仍然存在于内存中；被重新赋值的是变量 `name`，它改为指向新创建的 `"XLXC 2543"` 对象。
 
-字符串中每个字符对应一个从 0 开始的整数索引，其访问形式为：`<字符串>.charAt(<索引>)`。例如，在 `"Hello"` 中，`'H'` 的索引为 0，`'o'` 的索引为 4；最大合法索引等于字符串长度减 1。
+字符串中每个字符对应一个从 0 开始的整数索引，其访问形式为：
+
+```java
+<字符串>.charAt(<索引>)
+```
+
+例如，在 `"Hello"` 中，`'H'` 的索引为 0，`'o'` 的索引为 4；最大合法索引等于字符串长度减 1。
 
 > [!note]
 > 若传入的索引超出范围（小于 0 或大于等于字符串长度），将**抛出** `StringIndexOutOfBoundsException`。
@@ -369,7 +375,11 @@ NumberFormat fmt2 = NumberFormat.getPercentInstance();  // 百分比格式
 
 #### `DecimalFormat` 类
 
-`DecimalFormat` 类通过构造函数接收一个格式模式字符串。其创建形式为：`new DecimalFormat("<格式模式>")`。
+`DecimalFormat` 类通过构造函数接收一个格式模式字符串。其创建形式为：
+
+```java
+new DecimalFormat("<格式模式>")
+```
 
 ```java
 DecimalFormat fmt = new DecimalFormat("0.###");

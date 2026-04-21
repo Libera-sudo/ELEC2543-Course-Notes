@@ -18,7 +18,11 @@ maxLevel: 3
 
 枚举类型 (*Enumerated Type*) 允许程序员定义一组具名且固定的枚举常量 (*Enumerated Constants*)，并把它们作为一种新的类型使用。当某个变量的取值范围天然有限时，枚举能同时提供更清晰的语义和更严格的类型约束。
 
-其声明语法为：`enum <类型名> {<常量 1>, <常量 2>, <常量 3>, ...}`
+其声明语法为：
+
+```java
+enum <类型名> {<常量 1>, <常量 2>, <常量 3>, ...}
+```
 
 ```java
 enum Season {WINTER, SPRING, SUMMER, FALL}

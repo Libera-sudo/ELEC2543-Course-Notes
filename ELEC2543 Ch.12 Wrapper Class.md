@@ -377,7 +377,7 @@ Integer f = 100;              // 使用缓存
 System.out.println(e == f);   // false
 ```
 
-> [!question] In-Class Exercise (1)：装箱/拆箱分析与新对象创建判断
+> [!question] 习题：In-Class Exercise (1)：装箱/拆箱分析与新对象创建判断
 > 分析以下代码片段，回答三个问题：各变量的最终值、每条赋值语句中发生的装箱/拆箱操作，以及每条赋值语句是否创建了新的 `Integer` 对象。
 >
 > ```java
@@ -458,7 +458,7 @@ System.out.println(e == f);   // false
 > > | 第 6 行 | 拆箱     | 否               |
 > > | 第 7 行 | 拆箱 + 装箱 | 是（`2001` 超出缓存范围） |
 
-> [!question] In-Class Exercise (2)：六组 `==` 比较输出分析
+> [!question] 习题：In-Class Exercise (2)：六组 `==` 比较输出分析
 > 分析 `TestInteger_new.java` 中六组代码片段，给出每组 `System.out.println(obj1 == obj2)` 的输出。`obj1` 与 `obj2` 均为 `Integer` 类型。
 >
 > ```java

@@ -28,7 +28,11 @@ Die die1;   // 引用变量，未初始化，不创建任何 Die 对象
 > [!note]
 > 声明引用变量与创建对象是两个独立步骤。仅声明 `Die die1;` 时，不存在任何 `Die` 对象；试图通过未初始化的引用调用方法将抛出 `NullPointerException`。
 
-使用 `new` 运算符创建对象，其一般形式为：`new <类名>(<变量>)`。
+使用 `new` 运算符创建对象，其一般形式为：
+
+```java
+new <类名>(<变量>)
+```
 
 `new` 在堆内存中为对象分配空间，并调用对应的构造器 (*Constructor*) 完成初始化。创建对象的过程称为实例化 (*Instantiation*)，所创建的对象称为该类的一个实例 (*Instance*)。构造器是与类同名的特殊方法，负责设置对象的初始状态。
 
@@ -179,7 +183,7 @@ die2 → [ address ]  ──────────┘
 > - `changeValue` 将该唯一对象的 `num` 改为 `300`。
 > - `obj1` 与 `obj2` 指向同一对象，故两者的 `toString()` 均输出 `num = 300`。
 
-> [!question] 习题 1. 识别垃圾对象
+> [!question] 习题：识别垃圾对象
 > 在第 2 节示例程序 `TestMyInteger.java` 中，是否产生了垃圾对象？若有，描述其内容。
 >
 > > [!check]-
@@ -200,7 +204,7 @@ die2 → [ address ]  ──────────┘
 > >
 > > - 程序产生了一个垃圾对象，即最初由 `new MyInteger(200)` 创建、内部状态为 `num = 200` 的 `MyInteger` 实例。
 
-> [!question] 习题 2. 拷贝构造器 (*Copy Constructor*)
+> [!question] 习题：拷贝构造器 (*Copy Constructor*)
 > 已知 `Die` 类新增如下构造器与方法：
 >
 > ```java
@@ -300,7 +304,7 @@ public class Account {
 > [!note]
 > `this` 仅在实例方法与构造器中有效，静态方法 (*Static Method*) 中不存在 `this`，因为静态方法不依附于任何具体对象。
 
-> [!question] 习题 3. `copy()` 方法的别名陷阱
+> [!question] 习题：`copy()` 方法的别名陷阱
 > 设 `Die` 类中有如下方法：
 >
 > ```java

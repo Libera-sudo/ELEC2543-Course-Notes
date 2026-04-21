@@ -69,12 +69,18 @@ maxLevel: 3
 > > [!info]- UML 框图
 > >
 > > ```
-> > ┌──────────────────┐   调用    ┌──────────────────────────────────┐
-> > │ MyMathDemo       │──────────▶│ MyMath                           │
-> > │  + main          │           │  + static isOdd(int): boolean    │
-> > └──────────────────┘           │  + static isEven(int): boolean   │
-> >                                │  + static isPrime(int): boolean  │
-> >                                └──────────────────────────────────┘
+> > ┌──────────────────┐
+> > │ MyMathDemo       │
+> > │  + main          │
+> > └────────┬─────────┘
+> >          │ 调用
+> >          v
+> > ┌──────────────────────────────────┐
+> > │ MyMath                           │
+> > │  + static isOdd(int): boolean    │
+> > │  + static isEven(int): boolean   │
+> > │  + static isPrime(int): boolean  │
+> > └──────────────────────────────────┘
 > > ```
 >
 > ```java
@@ -180,7 +186,17 @@ maxLevel: 3
 
 每个对象拥有独立的数据空间，各实例变量互不干扰。静态变量 (*Static Variable*) 不同，该变量在内存中只存一份副本，由该类的所有对象共享，因此也称为类变量 (*Class Variable*)。
 
-其声明格式为：`<可见性> static <类型> <变量名>`，例如 `private static float price`。
+其声明格式为：
+
+```java
+<可见性> static <类型> <变量名>
+```
+
+例如：
+
+```java
+private static float price;
+```
 
 静态变量的关键特性如下：
 
@@ -207,14 +223,20 @@ maxLevel: 3
 > > [!info]- UML 框图
 > >
 > > ```
-> > ┌──────────────────┐   调用    ┌────────────────────────────────┐
-> > │ SloganCounter    │──────────▶│ Slogan                         │
-> > │  + main          │           │  - phrase : String             │
-> > └──────────────────┘           │  - static count : int          │
-> >                                │  + Slogan(String)              │
-> >                                │  + toString()                  │
-> >                                │  + static getCount(): int      │
-> >                                └────────────────────────────────┘
+> > ┌──────────────────┐
+> > │ SloganCounter    │
+> > │  + main          │
+> > └────────┬─────────┘
+> >          │ 调用
+> >          v
+> > ┌────────────────────────────────┐
+> > │ Slogan                         │
+> > │  - phrase : String             │
+> > │  - static count : int          │
+> > │  + Slogan(String)              │
+> > │  + toString()                  │
+> > │  + static getCount(): int      │
+> > └────────────────────────────────┘
 > > ```
 >
 > ```java
