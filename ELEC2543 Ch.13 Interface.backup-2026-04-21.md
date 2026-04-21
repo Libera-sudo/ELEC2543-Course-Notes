@@ -5,16 +5,14 @@
 `Post:` [[ELEC2543 Ch.14 Inheritance]]
 
 > [!abstract]
-> 接口 (*Interface*) 是 Java 面向对象类型系统中用于定义行为契约的核心语言机制，属于抽象化设计的基础工具。
+> 接口 (_Interface_) 是 Java 面向对象类型系统中用于定义行为契约的核心语言机制，属于抽象化设计的基础工具。
 >
-> Java 严格区分"定义行为"与"实现行为"两个层次：接口只声明方法签名，不提供任何实现；具体类通过 `implements` 关键字承诺并完整实现接口中的所有方法。这一设计使不同类的对象能够以统一的接口类型被处理，是多态性的重要实现途径之一。与 Python 的鸭子类型 (*Duck Typing*) 不同，Java 的接口机制在编译期强制检查类型契约，提供更强的类型安全保证。
+> Java 严格区分"定义行为"与"实现行为"两个层次：接口只声明方法签名，不提供任何实现；具体类通过 `implements` 关键字承诺并完整实现接口中的所有方法。这一设计使不同类的对象能够以统一的接口类型被处理，是多态性的重要实现途径之一。与 Python 的鸭子类型（_Duck Typing_）不同，Java 的接口机制在编译期强制检查类型契约，提供更强的类型安全保证。
 >
 > 本章涵盖接口的定义语法与约束规则、类实现接口的方式、接口作为类型名与方法参数的用法，以及标准库中 `Comparable` 接口的语义与自定义实现。
-
 ```table-of-contents
 maxLevel: 3
 ```
-
 ## 13.1 接口的定义与规则
 
 接口 (*Interface*) 是抽象方法 (*Abstract Method*) 与常量的集合，不包含实例变量，也不提供任何方法的具体实现。接口的核心作用是建立一份行为契约：规定实现该接口的类必须提供哪些方法，但不规定这些方法如何实现。
@@ -78,23 +76,18 @@ public class CanDo implements Doable
 
 若一个类声明实现某接口但未实现其中所有方法，编译器将报错：
 
-> [!warning]
-> 实现类不能只实现接口中的部分方法；除非该类本身也声明为 `abstract`，否则缺少任一接口方法都会使类定义不完整。
->
-> > [!bug]
-> >
-> > ```java
-> > public class CanDo implements Doable
-> > {
-> >     public void doThis() { }
-> >     // 其余接口方法未实现
-> > }
-> > ```
-> >
-> > ```
-> > java: CanDo is not abstract and does not override abstract method
-> > doTheOther(int) in Doable
-> > ```
+> [!bug]
+> ```java
+> public class CanDo implements Doable
+> {
+>     public void doThis() { }
+>     // 其余方法未实现
+> }
+> ```
+> ```
+> java: CanDo is not abstract and does not override abstract method
+> doTheOther(int) in Doable
+> ```
 
 一个类可以同时实现多个接口，在 `implements` 子句中以逗号分隔列出所有接口名，并必须实现所有接口中的全部方法：
 
@@ -116,8 +109,6 @@ class ManyThings implements Interface1, Interface2
 
 > [!example]- 示例：`Hello.java`
 >
-> `Hello.java` 定义所有问候类共同承诺实现的 `sayHello()` 行为，使不同语言类能够共享同一个接口类型。
->
 > ```java
 > public interface Hello {
 >     public void sayHello();
@@ -130,7 +121,7 @@ class ManyThings implements Interface1, Interface2
 
 接口可以由不同的类，以不同的变量结构和方式实现：
 
-> [!example]- 示例：`Chinese.java` / `English.java` / `Spanish.java`
+> [!example]- 示例：`Chinese` / `English` / `Spanish`
 >
 > `Chinese`、`English`、`Spanish` 三个类均实现了 `Hello` 接口，各自拥有不同的实例变量结构，并以各自的方式实现 `sayHello()`：
 >
@@ -209,8 +200,6 @@ Hello e1 = new English("Obama", "Barack", "Hussein");  // 指向 English 对象
 
 > [!example]- 示例：`HelloDriver.java`
 >
-> `HelloDriver.java` 将方法参数声明为 `Hello` 接口类型，使同一个 `invoke_method` 能接收不同问候类对象并调用各自的 `sayHello()` 实现。
->
 > ```java
 > public class HelloDriver {
 >
@@ -237,7 +226,6 @@ Hello e1 = new English("Obama", "Barack", "Hussein");  // 指向 English 对象
 > Liu Bang says Ni Hao.
 > Barack Hussein Obama says Hello.
 > ```
->
 > **接口类型作为参数**
 > ```java
 > public static void invoke_method(Hello person) {
@@ -345,8 +333,7 @@ public int compareTo(Object other) {
 > The largest among s1-s3 is bye
 > The largest among f1-f3 is 2/3
 > ```
->
-> **`largest` 方法的逻辑**
+> ** `largest` 方法的逻辑**
 > ```java
 > if (c1.compareTo(c2) > 0 && c1.compareTo(c3) > 0) return c1;
 > if (c2.compareTo(c1) > 0 && c2.compareTo(c3) > 0) return c2;
@@ -405,7 +392,7 @@ public int compareTo(Object other) {
 > The largest among s1-s3 is bye
 > ```
 >
-> **`int` 传入 `Comparable` 参数的原因**
+> ** `int` 传入 `Comparable` 参数的原因**
 > ```java
 > int n1 = 1, n2 = 8, n3 = 6;
 > largest(n1, n2, n3);  // int 自动装箱为 Integer

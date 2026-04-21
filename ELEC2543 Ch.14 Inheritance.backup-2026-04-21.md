@@ -10,11 +10,9 @@
 > Java 采用单继承模型：每个类至多有一个直接父类，通过 `extends` 关键字建立派生关系。子类自动获得父类的方法与数据，同时可通过方法覆写 (*Method Overriding*) 定制行为。这一设计避免了多重类继承中的命名冲突问题，同时以接口机制补偿多重行为约定的需求。与 Python 支持多重继承不同，Java 在编译期严格约束继承链，使类型关系更为清晰可预测。
 >
 > 本章涵盖子类的创建语法与 `extends` 关键字、`protected` 访问修饰符、`super` 引用的两种用途、方法覆写与变量遮蔽、类层次结构与 `Object` 类、抽象类与抽象方法、接口层次结构，以及继承中的可见性规则与面向继承的设计原则。
-
 ```table-of-contents
 maxLevel: 3
 ```
-
 ## 14.1 创建子类
 
 继承允许程序员从一个已有类派生出新类，新类自动获得父类定义的所有方法与实例变量，并可在此基础上添加新成员或修改已有行为。这一机制的核心价值在于软件复用：已经过设计、实现与测试的代码可以直接被新类利用，无需重复编写。
@@ -29,7 +27,7 @@ public class Car extends Vehicle
 ```
 
 - 被继承的类称为父类 (*Parent Class*) / 超类 (*Superclass*) / 基类 (*Base Class*)。
-- 派生出的新类称为派生类 (*Derived Class*) / 子类 (*Subclass*)。
+- 派生出的新类称为子类 (*Child Class*) / 子类 (*Subclass*)。
 - 继承关系在 UML 类图中以实线空心三角箭头表示，箭头指向父类。
 ```
         +--------------------------+
@@ -201,14 +199,14 @@ public class Dictionary extends Book
 > - `getPages()` 定义在 `Book` 中，`Dictionary` 未重新定义该方法，因此直接继承并使用父类版本。
 > - `webster` 是 `Dictionary` 对象，但可以调用所有继承自 `Book` 的 `public` 方法。
 >
-> **`protected` 字段的直接访问**
+> ** `protected` 字段的直接访问**
 > ```java
 > return (double) definitions / pages;
 > ```
 > - `pages` 是 `Book` 中声明的 `protected` 字段，`Dictionary` 作为子类可在方法体内直接按名引用，无需通过 `getPages()`。
 > - `definitions` 是 `Dictionary` 自有的 `private` 字段，仅在 `Dictionary` 内部可见。
 >
-> **`computeRatio()` 的类型转换**
+> ** `computeRatio()` 的类型转换**
 > ```java
 > return (double) definitions / pages;
 > ```
@@ -219,7 +217,7 @@ public class Dictionary extends Book
 > 课件提供的 `Dictionary.java` 源文件中，无参构造器版本（`Dictionary()`）与带参构造器版本（`Dictionary(int, int)`）共存，且带参版本注释掉了 `super(numPages)` 调用。
 >
 > > [!quote]
-> > 关于构造器与 `super` 的完整用法，将在 14.3 节中通过 `Book2` / `Dictionary2` 示例详细说明。
+>> 关于构造器与 `super` 的完整用法，将在 14.3 节中通过 `Book2` / `Dictionary2` 示例详细说明。
 
 ## 14.2 方法覆写
 
@@ -315,14 +313,14 @@ public final void criticalMethod() { ... }
 >
 > ```
 >
-> **`parked.message()` 的调用**
+> ** `parked.message()` 的调用**
 > ```java
 > Thought parked = new Thought();
 > parked.message();
 > ```
 > - `parked` 的实际类型为 `Thought`，调用 `Thought.message()`，输出第一行消息。
 >
-> **`dates.message()` 的调用**
+> ** `dates.message()` 的调用**
 > ```java
 > Advice dates = new Advice();
 > dates.message();
@@ -331,7 +329,7 @@ public final void criticalMethod() { ... }
 > - `Advice.message()` 首先输出自己的消息，随后通过 `super.message()` 调用 `Thought.message()`，输出父类消息。
 > - 因此 `dates.message()` 共产生两段输出。
 >
-> **`super.message()` 的作用**
+> ** `super.message()` 的作用**
 > ```java
 > super.message();
 > ```
@@ -339,29 +337,12 @@ public final void criticalMethod() { ... }
 > - `super.message()` 明确指定调用父类 `Thought` 中定义的版本，绕过子类的覆写。
 
 > [!note]
-> 在子类覆写父类方法时，建议显式添加 `@Override` 注解。它会强制编译器检查被标记的方法签名是否与父类中被覆写的方法完全一致，并向代码阅读者表明该方法是有意替换父类行为。
+> 在子类覆写父类方法时，建议显式添加 `@Override` 注解。
+>
+> - **编译期校验**：强制编译器检查被标记的方法签名是否与父类中被覆写的方法完全一致（方法名、参数列表、返回类型）。若父类不存在匹配的方法，编译器立即报错。
+> - **意图明确**：向代码阅读者表明"此方法是有意替换父类行为"，而非粗心拼写错误或意外的方法屏蔽。
 >
 > 例如，若将 `message` 误写为 `messages`，未加 `@Override` 时编译器会认为这是一个新方法；添加 `@Override` 后，编译器会提示 "method does not override or implement a method from a supertype"，及时暴露错误。
-
-> [!question] 习题：True or False?
-> 判断以下语句的真假。
->
-> - A child class may define a method with the same name as a method in the parent.
-> - A child class can override the constructor of the parent class.
-> - A child class cannot override a `final` method of the parent class.
-> - It is considered poor design when a child class overrides a method from the parent.
-> - A child class may define a variable with the same name as a variable in the parent.
->
-> > [!check]-
-> > 第一项为真，子类可以定义与父类同名的方法；若签名相同，则构成覆写。
-> >
-> > 第二项为假，构造器不能被继承，因此也不能被覆写。
-> >
-> > 第三项为真，`final` 方法禁止子类覆写。
-> >
-> > 第四项为假，覆写本身不是坏设计；在子类需要定制父类行为时，覆写是正常机制。
-> >
-> > 第五项为真，但不建议这样做，因为子类同名变量会遮蔽父类变量，使代码语义变得混乱。
 
 ## 14.3 类层次结构
 
@@ -467,7 +448,7 @@ public class Dictionary2 extends Book2
 > Definitions per page: 35.0
 > ```
 >
-> **`super(numPages)` 的执行**
+> ** `super(numPages)` 的执行**
 > ```java
 > public Dictionary2(int numPages, int numDefinitions)
 > {
@@ -633,7 +614,7 @@ public abstract int charge(int base);
 > - `charge` 在 `HKUPerson` 中声明为抽象方法，`Student` 与 `Staff` 各自提供不同实现。
 > - 运行时根据对象的实际类型决定调用哪个版本，体现多态性。
 >
-> **`super.toString()` 的复用**
+> ** `super.toString()` 的复用**
 > ```java
 > public String toString()
 > {
@@ -650,17 +631,6 @@ public abstract int charge(int base);
 > ```
 > - `+` 运算符与字符串拼接时，若操作数为对象，Java 自动调用该对象的 `toString()` 方法。
 > - 此处调用的是 `Student.toString()`（覆写版本），而非 `HKUPerson.toString()`。
-
-> [!question] 习题：Object class and abstract class
-> 回答以下两个问题。
->
-> - What are some methods defined by the `Object` class?
-> - What is an abstract class?
->
-> > [!check]-
-> > `Object` 类中常见方法包括 `String toString()`、`boolean equals(Object obj)` 与 `Object clone()`。
-> >
-> > 抽象类是类层次结构中的占位类，用于表示一个过于通用而不应直接实例化的概念。它可以集中定义派生类共有的结构与行为，并要求子类实现其中的抽象方法。
 
 #### 接口层次结构 (*Interface Hierarchy*)
 
@@ -775,7 +745,7 @@ interface Calculator extends Add_Sub, Mul_Div
 > - `Calculator` 继承了 `Add_Sub` 的 `add`、`subtract` 与 `Mul_Div` 的 `multiply`、`divide`，并新增 `printResult`，共 5 个抽象方法。
 > - `MyCalculator implements Calculator` 须实现全部 5 个方法，缺少任何一个均会导致编译错误。
 >
-> **`printResult` 在其他方法中的调用**
+> ** `printResult` 在其他方法中的调用**
 > ```java
 > public void add(double x, double y)
 > {
@@ -786,7 +756,7 @@ interface Calculator extends Add_Sub, Mul_Div
 > - `add`、`subtract`、`multiply`、`divide` 四个方法均将计算结果传入 `printResult`，由后者统一负责输出格式。
 > - 这体现了将输出逻辑集中管理的设计思路，修改输出格式时只需改动 `printResult` 一处。
 >
-> **`divide(45, 6)` 的结果**
+> ** `divide(45, 6)` 的结果**
 > ```java
 > c.divide(45, 6);  // 输出 7.5
 > ```
@@ -873,7 +843,7 @@ interface Calculator extends Add_Sub, Mul_Div
 > - `Pizza` 继承了 `caloriesPerServing()` 这一 `public` 方法，该方法在 `FoodItem` 内部调用了 `private` 的 `calories()`。
 > - `Pizza` 对象调用 `caloriesPerServing()` 时，执行的是 `FoodItem` 中的方法体，该方法体可以合法访问 `FoodItem` 的私有成员。这就是间接可见性的完整路径：`Pizza` → `caloriesPerServing()`（继承自父类）→ `calories()`（父类私有）→ `fatGrams`（父类私有）。
 >
-> **`protected` 与 `private` 字段的对比**
+> ** `protected` 与 `private` 字段的对比**
 > ```java
 > final private int CALORIES_PER_GRAM = 9;
 > private int fatGrams;
@@ -882,7 +852,7 @@ interface Calculator extends Add_Sub, Mul_Div
 > - `fatGrams` 与 `CALORIES_PER_GRAM` 声明为 `private`，子类无法直接访问，只能通过父类方法间接使用。
 > - `servings` 声明为 `protected`，`Pizza` 若需要可直接按名引用，无需通过方法。
 >
-> **`super(fatGrams, 8)` 的作用**
+> ** `super(fatGrams, 8)` 的作用**
 > ```java
 > public Pizza(int fatGrams)
 > {
@@ -948,45 +918,6 @@ public final class ImmutableClass
 
 > [!note]
 > Java 标准库中 `String` 类即被声明为 `final`，因此无法创建 `String` 的子类。这一设计保证了字符串的不可变性与安全性不会被子类破坏。
-
-> [!question] 习题：Draw a UML class diagram
-> Draw a UML class diagram showing an inheritance hierarchy containing classes that represent different types of cars, organized first by manufacturer. Show some appropriate variables and method names for at least two of these classes.
->
-> > [!check]-
-> > 一种可行结构是先以通用 `Car` 类作为父类，再按制造商派生出 `ToyotaCar`、`HondaCar` 等子类，并在制造商类下继续派生具体车型。
-> >
-> > ```
-> >                 +----------------------+
-> >                 |         Car          |
-> >                 +----------------------+
-> >                 | - vin: String        |
-> >                 | - year: int          |
-> >                 +----------------------+
-> >                 | + start(): void      |
-> >                 | + stop(): void       |
-> >                 +----------------------+
-> >                            △
-> >              ┌─────────────┴─────────────┐
-> >              │                           │
-> >   +----------------------+    +----------------------+
-> >   |      ToyotaCar       |    |       HondaCar       |
-> >   +----------------------+    +----------------------+
-> >   | - hybridMode: boolean|    | - ecoMode: boolean   |
-> >   +----------------------+    +----------------------+
-> >   | + enableHybrid():void|    | + enableEco(): void  |
-> >   +----------------------+    +----------------------+
-> >              △
-> >              │
-> >   +----------------------+
-> >   |        Prius         |
-> >   +----------------------+
-> >   | - batteryLevel: int  |
-> >   +----------------------+
-> >   | + charge(): void     |
-> >   +----------------------+
-> > ```
-> >
-> > 该结构满足 is-a 关系：`ToyotaCar` 是一种 `Car`，`Prius` 是一种 `ToyotaCar`。变量与方法被放在能覆盖相应对象范围的最高合理层级，避免在多个具体车型中重复定义。
 
 ---
 `Pre: ` [[ELEC2543 Ch.13 Interface]]

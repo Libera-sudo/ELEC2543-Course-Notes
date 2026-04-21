@@ -5,16 +5,14 @@
 `Post:` [[ELEC2543 Ch.16 Exceptions]]
 
 > [!abstract]
-> 多态性 (*Polymorphism*) 是面向对象程序设计中描述"同一操作作用于不同类型对象时产生不同行为"这一现象的核心概念，是 Java 类型系统灵活性的集中体现。
+> 多态性 (_Polymorphism_) 是面向对象程序设计中描述"同一操作作用于不同类型对象时产生不同行为"这一现象的核心概念，是 Java 类型系统灵活性的集中体现。
 >
-> Java 通过延迟方法绑定 (*Late Binding*) 实现多态：方法调用在编译期仅做类型检查，实际绑定到哪个方法体由运行时对象的真实类型决定。这与 Python 的鸭子类型在效果上相似，但 Java 在编译期严格约束引用变量只能调用其静态类型所声明的方法，提供更强的类型安全保证。
+> Java 通过延迟方法绑定 (_Late Binding_) 实现多态：方法调用在编译期仅做类型检查，实际绑定到哪个方法体由运行时对象的真实类型决定。这与 Python 的鸭子类型在效果上相似，但 Java 在编译期严格约束引用变量只能调用其静态类型所声明的方法，提供更强的类型安全保证。
 >
-> 本章涵盖动态绑定的机制与意义、通过继承建立多态引用、通过接口建立多态引用，以及将多态性应用于选择排序 (*Selection Sort*) 算法的通用实现。
-
+> 本章涵盖动态绑定的机制与意义、通过继承建立多态引用、通过接口建立多态引用，以及将多态性应用于选择排序 (_Selection Sort_) 算法的通用实现。
 ```table-of-contents
 maxLevel: 3
 ```
-
 ## 15.1 动态绑定
 
 多态性 (*Polymorphism*) 字面含义为"具有多种形态"，在 Java 中指同一方法调用在运行时根据对象的实际类型执行不同的方法体。多态引用 (*Polymorphic Reference*) 是一个可以在不同时刻指向不同类型对象的引用变量。
@@ -48,7 +46,7 @@ Holiday day;
 day = new Christmas();  // 合法：Christmas is-a Holiday
 ```
 
-将子类对象赋给父类引用是简单赋值，无需任何转型操作。但若将父类对象反向赋给子类引用，则必须使用强制转型 (*Cast*)。
+将子类对象赋给父类引用是简单赋值，无需任何转型操作。但若将将父类对象反向赋给子类引用，则必须使用强制转型 (*Cast*)。
 
 这在逻辑上通常是不合理的，因为并非所有 `Holiday` 都是 `Christmas`。
 
@@ -73,23 +71,10 @@ day.getTree();              // 编译错误：Holiday 中未声明 getTree()
 
 > [!note]
 > 编译器与 JVM 在多态中的分工：
-> - 编译器基于引用的静态类型（声明类型）检查方法调用是否合法，决定"能调用什么"。
-> - JVM 基于引用实际指向的动态类型（对象类型）决定执行哪个方法体，决定"调用哪个版本"。
+> - 编译器基于引用的**静态类型**（声明类型）检查方法调用是否合法，决定"能调用什么"。
+> - JVM 基于引用实际指向的**动态类型**（对象类型）决定执行哪个方法体，决定"调用哪个版本"。
 >
 > 这两步分离是 Java 类型安全与多态灵活性并存的关键。
-
-> [!question] 习题：MusicPlayer and CDPlayer
-> If `MusicPlayer` is the parent of `CDPlayer`, are the following assignments valid?
->
-> ```java
-> MusicPlayer mplayer = new CDPlayer();
-> CDPlayer cdplayer = new MusicPlayer();
-> ```
->
-> > [!check]-
-> > `MusicPlayer mplayer = new CDPlayer();` 合法，因为 `CDPlayer` is-a `MusicPlayer`，子类对象可以直接赋给父类引用。
-> >
-> > `CDPlayer cdplayer = new MusicPlayer();` 不合法。父类对象不一定是子类对象，若确实需要反向赋值，必须显式强制转型；但在设计上不应主动把确定的父类对象当作子类对象使用。
 
 > [!example]- 示例：`Firm.java` / `Staff.java` / `StaffMember.java` / `Volunteer.java` / `Employee.java` / `Executive.java` / `Hourly.java`
 > 演示通过继承层次结构中的父类引用数组实现多态方法调用，同一 `pay()` 调用对不同子类对象产生不同行为。
@@ -376,7 +361,7 @@ day.getTree();              // 编译错误：Holiday 中未声明 getTree()
 > - 数组元素类型为 `StaffMember`（抽象父类），但每个元素实际指向不同子类的对象。
 > - 这是多态的典型应用场景：用统一的父类类型管理一组异构对象。
 >
-> **多态调用 `pay()`**
+> **多态调用 `pay()` **
 > ```java
 > amount = staffList[count].pay();
 > ```
@@ -387,7 +372,7 @@ day.getTree();              // 编译错误：Holiday 中未声明 getTree()
 >   - `Hourly`：`payRate * hoursWorked` = $10.55 \times 40 = 422.0$
 >   - `Volunteer`：返回 `0.0`
 >
-> **多态调用 `toString()`**
+> **多态调用 `toString()` **
 > ```java
 > System.out.println(staffList[count]);
 > ```
@@ -405,7 +390,7 @@ day.getTree();              // 编译错误：Holiday 中未声明 getTree()
 > - 通过 `StaffMember` 引用无法直接调用这些方法，必须先向下转型为具体子类类型。
 > - 若转型目标与对象实际类型不匹配（如将 `staffList[1]` 转为 `Executive`），运行时抛出 `ClassCastException`。
 >
-> **`Executive.pay()` 中 `super.pay()` 的复用**
+> ** `Executive.pay()` 中 `super.pay()` 的复用**
 > ```java
 > public double pay()
 > {
@@ -470,19 +455,6 @@ first = second;                     // 合法：Philosopher 实现了 Speaker，
 
 > [!note]
 > 通过继承建立的多态与通过接口建立的多态在机制上完全一致，均依赖动态绑定。两者的区别在于兼容性的来源：继承多态要求对象类型与引用类型之间存在 is-a 关系；接口多态要求对象所属的类实现了引用变量声明的接口类型。
-
-> [!question] 习题：Speaker interface assignments
-> Would the following statements be valid?
->
-> ```java
-> Speaker first = new Dog();
-> Philosopher second = new Philosopher();
-> second.pontificate();
-> first = second;
-> ```
->
-> > [!check]-
-> > 这些语句均合法。`Dog` 实现了 `Speaker`，因此 `new Dog()` 可以赋给 `Speaker` 引用；`second` 的静态类型是 `Philosopher`，因此可调用 `Philosopher` 自己定义的 `pontificate()`；若 `Philosopher` 也实现了 `Speaker`，则 `second` 也可以赋给 `Speaker` 类型的 `first`。
 
 ## 15.4 多态性在排序中的应用
 
@@ -658,14 +630,14 @@ second = temp;    // 用保存的原 first 值覆盖 second
 > Smith, Larry    464-555-3489
 > ```
 >
-> **`selectionSort` 的参数类型**
+> ** `selectionSort` 的参数类型**
 > ```java
 > public static void selectionSort(Comparable[] list)
 > ```
 > - 参数类型为 `Comparable[]`，`Contact[]` 可以直接传入，因为 `Contact` 实现了 `Comparable`，`Contact[]` 是 `Comparable[]` 的子类型。
 > - 方法体内只调用 `compareTo()`，不依赖任何具体类型，因此对 `String[]`、`Integer[]`、`Contact[]` 等均适用。
 >
-> **`compareTo` 的多态调用**
+> ** `compareTo` 的多态调用**
 > ```java
 > if (list[scan].compareTo(list[min]) < 0)
 >     min = scan;
@@ -674,7 +646,7 @@ second = temp;    // 用保存的原 first 值覆盖 second
 > - 运行时，JVM 根据 `list[scan]` 实际指向的对象类型（此处为 `Contact`）调用 `Contact.compareTo()`。
 > - 这正是多态性使排序算法与具体类型解耦的关键：排序逻辑不需要知道元素是什么类型，只需要它们实现了 `Comparable`。
 >
-> **`Contact.compareTo` 的比较逻辑**
+> ** `Contact.compareTo` 的比较逻辑**
 > ```java
 > if (lastName.equals(otherLast))
 >     result = firstName.compareTo(otherFirst);
