@@ -49,4 +49,5 @@ Assessment: 60% continuous assessment, 40% examination
 > [[ELEC2543 Ch.16 Exceptions]]
 > [[ELEC2543 Ch.17 Recursion]]
 > [[ELEC2543 Ch.18 Sorting]]
+> [[ELEC2543 Ch.19 Data Structures]]
 
