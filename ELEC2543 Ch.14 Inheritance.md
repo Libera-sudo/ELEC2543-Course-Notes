@@ -949,8 +949,8 @@ public final class ImmutableClass
 > [!note]
 > Java 标准库中 `String` 类即被声明为 `final`，因此无法创建 `String` 的子类。这一设计保证了字符串的不可变性与安全性不会被子类破坏。
 
-> [!question] 习题：Draw a UML class diagram
-> Draw a UML class diagram showing an inheritance hierarchy containing classes that represent different types of cars, organized first by manufacturer. Show some appropriate variables and method names for at least two of these classes.
+> [!question] 习题：绘制 UML 类图
+>绘制一个 UML 类图，显示一个继承层次结构，其中包含代表不同类型汽车的类，首先由制造商组织。显示至少其中两个类的一些适当的变量和方法名称。
 >
 > > [!check]-
 > > 一种可行结构是先以通用 `Car` 类作为父类，再按制造商派生出 `ToyotaCar`、`HondaCar` 等子类，并在制造商类下继续派生具体车型。

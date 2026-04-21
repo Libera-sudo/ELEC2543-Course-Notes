@@ -78,8 +78,8 @@ day.getTree();              // 编译错误：Holiday 中未声明 getTree()
 >
 > 这两步分离是 Java 类型安全与多态灵活性并存的关键。
 
-> [!question] 习题：MusicPlayer and CDPlayer
-> If `MusicPlayer` is the parent of `CDPlayer`, are the following assignments valid?
+> [!question] 习题：MusicPlayer 和 CDPlayer
+> 如果 `MusicPlayer` 是 `CDPlayer` 的父级，则以下分配有效吗？
 >
 > ```java
 > MusicPlayer mplayer = new CDPlayer();
@@ -471,8 +471,8 @@ first = second;                     // 合法：Philosopher 实现了 Speaker，
 > [!note]
 > 通过继承建立的多态与通过接口建立的多态在机制上完全一致，均依赖动态绑定。两者的区别在于兼容性的来源：继承多态要求对象类型与引用类型之间存在 is-a 关系；接口多态要求对象所属的类实现了引用变量声明的接口类型。
 
-> [!question] 习题：Speaker interface assignments
-> Would the following statements be valid?
+> [!question] 习题：Speaker 接口分配
+> 以下陈述有效吗？
 >
 > ```java
 > Speaker first = new Dog();
