@@ -443,13 +443,13 @@ void methodName(int[] arr)  // 形式参数类型为 int[]
 >     }
 >
 >     public static void main(String[] args) {
->         final int LIMIT = 5, MULcomparisonLE = 10;
+>         final int LIMIT = 5, MULTIPLE = 10;
 >
 >         int[] list = new int[LIMIT];  // 创建长度为 5 的整型数组
 >
 >         // 初始化数组：list = {0, 10, 20, 30, 40}
 >         for (int index = 0; index < LIMIT; index++)
->             list[index] = index * MULcomparisonLE;
+>             list[index] = index * MULTIPLE;
 >
 >         // 打印调用前的数组内容
 >         System.out.println("Before calling changeElement:");
