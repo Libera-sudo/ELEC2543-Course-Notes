@@ -125,7 +125,7 @@ System.out.println(total);            // 根据 total 的类型匹配对应版�
 
 方法被调用时，调用处提供的值称为实际参数 (*Actual Parameter*)，方法头中声明的变量称为形式参数。Java 的参数传递规则统一为值传递：实际参数的值被复制到对应的形式参数中，这一过程等价于一次赋值操作。对基本类型（`int`、`double`、`char` 等）而言，复制的是值本身，形式参数获得一份独立副本；对对象而言，复制的是引用 (*Reference*)，形式参数与实际参数成为同一对象的别名 (*Alias*)。
 
-> [!tip]
+> [!comparison]
 > Java 对基本类型与对象类型都采用值传递，区别在于被复制的"值"是什么。
 >
 > **基本类型**
@@ -416,7 +416,7 @@ void methodName(int[] arr)  // 形式参数类型为 int[]
 
 若只传递数组中的某一个元素，则形式参数类型与元素类型相同（如 `int`），此时按基本类型处理，方法内的修改不影响原数组中的该元素。
 
-> [!tip]
+> [!comparison]
 > 数组整体传递与单个元素传递的行为截然不同。
 >
 > **传递整个数组 `arr`**
@@ -443,13 +443,13 @@ void methodName(int[] arr)  // 形式参数类型为 int[]
 >     }
 >
 >     public static void main(String[] args) {
->         final int LIMIT = 5, MULTIPLE = 10;
+>         final int LIMIT = 5, MULcomparisonLE = 10;
 >
 >         int[] list = new int[LIMIT];  // 创建长度为 5 的整型数组
 >
 >         // 初始化数组：list = {0, 10, 20, 30, 40}
 >         for (int index = 0; index < LIMIT; index++)
->             list[index] = index * MULTIPLE;
+>             list[index] = index * MULcomparisonLE;
 >
 >         // 打印调用前的数组内容
 >         System.out.println("Before calling changeElement:");
