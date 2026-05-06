@@ -2,7 +2,7 @@
 # Chapter 19. 数据结构
 
 `Pre: ` [[ELEC2543 Ch.18 Sorting]]
-`Post:` [[ELEC2543 Ch.20]]
+`Post:` [[ELEC2543 Ch.20 Intro Trees]]
 
 > [!abstract]
 > 数据结构 (*Data Structure*) 指用于在内存中组织与管理一组数据的方式，决定了该组数据在程序中可以做的操作及其代价；抽象数据类型 (*Abstract Data Type, ADT*) 进一步把"数据的组织"与"管理操作的接口"封装在一起，对外仅暴露操作契约，对内由具体数据结构实现。同一 ADT 往往可由多种不同的数据结构承载，这种"逻辑使用方式"与"物理实现细节"相分离的观念，也是集合 (*Collection*) 类抽象的共同出发点。
@@ -619,8 +619,8 @@ list ──► [info|next|prev] ◄──► [info|next|prev] ◄──► [info
 
 ```
     ●───●         ●
-         ╲      ╱ │
-    ●───●─●───●   ●
+         ╲         ╱ │
+    ●───●─●───● ●
      ╲  │    │
       ●─●────●
         │
@@ -649,4 +649,4 @@ LinkedList<Book> myList = new LinkedList<Book>();
 
 ---
 `Pre: ` [[ELEC2543 Ch.18 Sorting]]
-`Post:` [[ELEC2543 Ch.20]]
+`Post:` [[ELEC2543 Ch.20 Intro Trees]]
