@@ -51,7 +51,6 @@ The note content is released under the [Creative Commons Attribution 4.0 Interna
 ## Acknowledgments
 
 - HKU ECE — for the underlying course material these notes synthesize.
-- [Liberas-MD-Note-Skill](https://github.com/Libera-sudo/Liberas-MD-Note-Skill) — the layered skill system used to author these notes.
 - [Obsidian](https://obsidian.md/) and its plugin community.
 - [Claude Code](https://claude.com/code) (Anthropic) — drafted this README.
 
